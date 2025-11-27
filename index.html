@@ -3,20 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Random Video Calls</title>
+  <title>Random Video Calls — Auto</title>
   <style>
     :root {
-      --bg: #0a0b10;
-      --panel: #0f1218;
-      --card: #131722;
-      --border: #222836;
-      --text: #e8ecf3;
-      --muted: #9aa5b1;
-      --accent: #6df1ff;
-      --accent2: #7cff8b;
-      --danger: #ff466b;
-      --warn: #ffb020;
-      --shadow: 0 18px 40px rgba(0,0,0,0.35);
+      --bg: #080a10; --panel: #0f1218; --card: #131722; --border: #222836;
+      --text: #e8ecf3; --muted: #9aa5b1; --accent: #6df1ff; --accent2: #7cff8b;
+      --danger: #ff466b; --warn: #ffb020; --shadow: 0 18px 40px rgba(0,0,0,0.35);
     }
     * { box-sizing: border-box }
     html, body { height: 100% }
@@ -33,9 +25,7 @@
       padding: 14px 20px; backdrop-filter: saturate(120%) blur(8px);
       background: rgba(10,12,16,0.6); border-bottom: 1px solid var(--border);
     }
-    .brand {
-      display: flex; align-items: center; gap: 10px;
-    }
+    .brand { display: flex; align-items: center; gap: 10px }
     .logo {
       width: 34px; height: 34px; border-radius: 10px;
       background: radial-gradient(180px 120px at 30% 20%, #1a2b3f, #0f1827 60%);
@@ -54,57 +44,24 @@
       color: var(--muted); font-size: 12px;
     }
 
-    .container {
-      max-width: 1200px; margin: 22px auto; padding: 0 22px;
-      display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px;
-    }
+    .container { max-width: 1200px; margin: 22px auto; padding: 0 22px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px }
     @media (max-width: 980px) { .container { grid-template-columns: 1fr } }
 
-    .panel {
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
-    }
-    .panel-header {
-      padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border); background: linear-gradient(180deg,#101522,#0f1218);
-    }
-    .badge {
-      padding: 6px 10px; border: 1px dashed var(--border); border-radius: 999px; font-size: 12px; color: var(--muted)
-    }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow) }
+    .panel-header { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: linear-gradient(180deg,#101522,#0f1218) }
+    .badge { padding: 6px 10px; border: 1px dashed var(--border); border-radius: 999px; font-size: 12px; color: var(--muted) }
 
-    .videos {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px;
-    }
+    .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px }
     @media (max-width: 780px) { .videos { grid-template-columns: 1fr } }
-    .video-card {
-      position: relative; border-radius: 12px; overflow: hidden;
-      background: var(--card); border: 1px solid var(--border);
-      aspect-ratio: 16/10;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.35);
-    }
+    .video-card { position: relative; border-radius: 12px; overflow: hidden; background: var(--card); border: 1px solid var(--border); aspect-ratio: 16/10; box-shadow: inset 0 0 30px rgba(0,0,0,0.35) }
     video { width: 100%; height: 100%; object-fit: cover; background: #000 }
-    .label {
-      position: absolute; left: 10px; bottom: 10px;
-      background: rgba(16,20,32,0.7); padding: 6px 10px; border: 1px solid var(--border);
-      border-radius: 8px; font-size: 12px; color: var(--muted); backdrop-filter: blur(4px);
-    }
-    .indicator {
-      position: absolute; right: 10px; top: 10px; display: flex; gap: 6px;
-    }
-    .dot { width: 8px; height: 8px; border-radius: 50% }
-    .dot.green { background: #66ff9a; box-shadow: 0 0 10px #66ff9a }
-    .dot.yellow { background: #ffd56b; box-shadow: 0 0 10px #ffd56b }
-    .dot.red { background: #ff7a8d; box-shadow: 0 0 10px #ff7a8d }
+    .label { position: absolute; left: 10px; bottom: 10px; background: rgba(16,20,32,0.7); padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--muted); backdrop-filter: blur(4px) }
 
-    .controls {
-      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px;
-      border-top: 1px solid var(--border); background: #0f131d;
-    }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; border-top: 1px solid var(--border); background: #0f131d }
     button {
       appearance: none; border: 1px solid #2a3242; color: var(--text);
       background: #121826; padding: 10px 14px; border-radius: 11px; font-weight: 600; font-size: 14px;
-      transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, filter .16s ease; cursor: pointer;
     }
     button:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,0,0,0.25) }
     .primary { background: linear-gradient(180deg,#6df1ff,#00a8ff); border: none; color: #06121a }
@@ -112,37 +69,17 @@
     .ghost { background: #131a28; border-color: #2a3242 }
     .warn { background: linear-gradient(180deg,#ffd98b,#ffb020); border: none; color: #2a1e0a }
 
-    .sidebar {
-      padding: 0;
-    }
-    .card {
-      margin: 16px; padding: 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
-    }
-    .card h3 { margin: 0 0 8px 0; font-size: 14px; color: var(--muted) }
-    .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
-    @media (max-width: 780px) { .kv { grid-template-columns: 1fr } }
-
     .log { padding: 12px 16px; font-size: 12px; color: var(--muted); height: 160px; overflow: auto; border-top: 1px solid var(--border); background: #0e121b }
-    .hint { font-size: 12px; color: var(--muted) }
-
-    .pulse {
-      animation: pulse 1.6s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(109,241,255,0.35) }
-      70% { box-shadow: 0 0 0 16px rgba(109,241,255,0) }
-      100% { box-shadow: 0 0 0 0 rgba(109,241,255,0) }
-    }
   </style>
 </head>
 <body>
   <div class="topbar">
     <div class="brand">
-      <div class="logo pulse"></div>
+      <div class="logo"></div>
       <h1>Random Video Calls</h1>
     </div>
     <div class="status">
-      <span class="pill" id="connStatus">Estado: offline</span>
+      <span class="pill" id="connStatus">Estado: init</span>
       <span class="pill" id="iceStatus">ICE: —</span>
       <span class="pill" id="matchStatus">Match: —</span>
       <span class="pill" id="roomBadge">Room: —</span>
@@ -153,61 +90,41 @@
     <section class="panel">
       <div class="panel-header">
         <strong>Videollamada</strong>
-        <span class="badge">STUN + reintento ICE</span>
+        <span class="badge">Autoconexión + Next infinito</span>
       </div>
       <div class="videos">
         <div class="video-card">
           <video id="remoteVideo" autoplay playsinline></video>
           <div class="label">Remote</div>
-          <div class="indicator">
-            <div class="dot" id="remoteDot"></div>
-          </div>
         </div>
         <div class="video-card">
           <video id="localVideo" autoplay playsinline muted></video>
           <div class="label">Tú</div>
-          <div class="indicator">
-            <div class="dot green" id="localDot"></div>
-          </div>
         </div>
       </div>
       <div class="controls">
-        <button class="primary" id="startBtn">Start</button>
-        <button class="ghost" id="nextBtn" disabled>Next</button>
+        <button class="primary" id="nextBtn" disabled>Next</button>
         <button class="ghost" id="muteBtn" disabled>Mute</button>
         <button class="ghost" id="cameraBtn" disabled>Camera off</button>
-        <button class="warn" id="restartIceBtn" disabled>Reintentar ICE</button>
+        <button class="warn" id="retryBtn" disabled>Reintentar</button>
         <button class="danger" id="endBtn" disabled>End</button>
       </div>
       <div class="log" id="log"></div>
     </section>
 
-    <aside class="panel sidebar">
+    <section class="panel">
       <div class="panel-header">
-        <strong>Estado y consejos</strong>
-        <span class="badge">Diagnóstico en vivo</span>
+        <strong>Estado</strong>
+        <span class="badge">Firebase + WebRTC</span>
       </div>
-      <div class="card">
-        <h3>Conexión</h3>
-        <div class="kv">
-          <div class="badge">Video: 720p</div>
-          <div class="badge">Audio: On</div>
-          <div class="badge">Signaling: Firebase RTDB</div>
-          <div class="badge">Trickle ICE: Sí</div>
-        </div>
-        <p class="hint" style="margin-top:8px">
-          Si ves “failed”, tu red puede necesitar un servidor TURN. El botón “Reintentar ICE” fuerza nueva negociación.
+      <div style="padding: 12px">
+        <p class="log" id="tips">
+          1) Abre la app en dos pestañas o dispositivos.<br>
+          2) Debe conectar solo. Si ves “failed”, tu red puede necesitar TURN.<br>
+          3) Next salta al siguiente usuario disponible sin tocar nada más.<br>
         </p>
       </div>
-      <div class="card">
-        <h3>Tips rápidos</h3>
-        <ul class="hint" style="margin:0 0 8px 16px">
-          <li>Prueba primero en dos pestañas del mismo navegador.</li>
-          <li>Luego en dos dispositivos dentro de la misma red Wi‑Fi.</li>
-          <li>Para 4G/NAT estrictos, añade TURN (coturn) y credenciales en iceServers.</li>
-        </ul>
-      </div>
-    </aside>
+    </section>
   </div>
 
   <!-- Firebase v8 compat -->
@@ -229,20 +146,15 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ======= UI refs =======
+    // ======= UI =======
     const logEl = document.getElementById('log');
     const localVideo = document.getElementById('localVideo');
     const remoteVideo = document.getElementById('remoteVideo');
-    const localDot = document.getElementById('localDot');
-    const remoteDot = document.getElementById('remoteDot');
-
-    const startBtn = document.getElementById('startBtn');
     const nextBtn = document.getElementById('nextBtn');
     const muteBtn = document.getElementById('muteBtn');
     const cameraBtn = document.getElementById('cameraBtn');
-    const restartIceBtn = document.getElementById('restartIceBtn');
+    const retryBtn = document.getElementById('retryBtn');
     const endBtn = document.getElementById('endBtn');
-
     const connStatus = document.getElementById('connStatus');
     const iceStatus = document.getElementById('iceStatus');
     const matchStatus = document.getElementById('matchStatus');
@@ -258,7 +170,7 @@
     const setRoom = (id) => roomBadge.textContent = `Room: ${id || '—'}`;
 
     // ======= Estado =======
-    let userId = `u_${Math.random().toString(36).slice(2,10)}`;
+    const userId = `u_${Math.random().toString(36).slice(2,10)}`;
     let pc = null;
     let localStream = null;
     let remoteStream = null;
@@ -266,20 +178,17 @@
     let role = null; // 'caller' | 'callee'
     let listeners = [];
     let inviteListener = null;
-    let iceRestartAttempts = 0;
-    const ICE_RESTART_MAX = 2;
+    let queueNodeRef = null;
 
-    // ======= ICE servers =======
-    // Añade TURN propio para garantizar conexión en redes móviles/NAT estrictos:
-    // { urls: "turn:TU_DOMINIO:3478", username: "USER", credential: "PASS" }
+    // STUN (para redes estrictas añade TURN)
     const iceServers = [
       { urls: ["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"] }
+      // { urls: "turn:TU_DOMINIO:3478", username: "USER", credential: "PASS" }
     ];
 
-    // ======= Media =======
     const mediaConstraints = { audio: true, video: { width: { ideal: 1280 }, height: { ideal: 720 } } };
 
-    // ======= DB refs =======
+    // DB refs
     const queueRef = db.ref('/queue');
     const roomsRef = db.ref('/rooms');
     const invitesRef = db.ref('/invites');
@@ -296,13 +205,10 @@
         localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
         localVideo.srcObject = localStream;
         setConn('cam/mic ok');
-        localDot.className = 'dot green';
         muteBtn.disabled = false; cameraBtn.disabled = false;
         return localStream;
       } catch(e) {
-        log('Permisos de cámara/mic rechazados o fallo: ' + e.message);
-        setConn('media error');
-        localDot.className = 'dot red';
+        setConn('media error'); log('Error al obtener media: ' + e.message);
         throw e;
       }
     }
@@ -311,118 +217,100 @@
       pc = new RTCPeerConnection({ iceServers });
       remoteStream = new MediaStream();
       remoteVideo.srcObject = remoteStream;
-      setIce('gathering');
-      remoteDot.className = 'dot yellow';
 
-      // Local tracks
       localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
-      // Remote tracks
       pc.ontrack = (ev) => {
         ev.streams[0]?.getTracks().forEach(t => remoteStream.addTrack(t));
-        remoteDot.className = 'dot green';
       };
 
-      // ICE candidates (local -> DB)
       pc.onicecandidate = (ev) => {
         if (ev.candidate && currentRoomId && role) {
-          const path = `/rooms/${currentRoomId}/candidates/${role}`;
-          db.ref(path).push(ev.candidate.toJSON());
+          db.ref(`/rooms/${currentRoomId}/candidates/${role}`).push(ev.candidate.toJSON());
         }
-        if (!ev.candidate) {
-          setIce('complete');
-          log('ICE gathering completado.');
-        }
+        if (!ev.candidate) setIce('complete');
       };
 
-      // ICE connection state
       pc.oniceconnectionstatechange = () => {
         const st = pc.iceConnectionState;
         setIce(st);
         if (st === 'failed') {
-          log('ICE failed. Intentando reintento automático...');
-          maybeRestartIce();
-        } else if (st === 'disconnected') {
-          log('ICE disconnected. Esperando recuperación o Next.');
+          setConn('failed');
+          setMatch('falló');
+          retryBtn.disabled = false;
         } else if (st === 'connected' || st === 'completed') {
-          iceRestartAttempts = 0;
+          setConn('connected');
           setMatch('conectado');
+          nextBtn.disabled = false; endBtn.disabled = false; retryBtn.disabled = false;
         }
       };
 
-      // Peer connection state
       pc.onconnectionstatechange = () => {
         setConn(pc.connectionState);
-        if (pc.connectionState === 'connected') {
-          setMatch('conectado');
-        } else if (['disconnected','failed','closed'].includes(pc.connectionState)) {
-          // Mantén controles, deja opción de reintentar/Next
-        }
       };
 
       return pc;
     }
 
-    // Escuchar ICE remotos
     function listenRemoteCandidates(oppositeRole) {
       const ref = db.ref(`/rooms/${currentRoomId}/candidates/${oppositeRole}`);
       const handler = async snap => {
         const cand = snap.val();
         try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) {
-          console.warn('addIceCandidate error', e);
-          log('Error addIceCandidate: ' + e.message);
+          log('addIceCandidate error: ' + e.message);
         }
       };
       ref.on('child_added', handler);
       listeners.push(() => ref.off('child_added', handler));
     }
 
-    // ======= Matchmaking =======
+    // ======= Matchmaking — toma siempre el primero disponible =======
     async function findMatch() {
-      const snap = await queueRef.orderByChild('ts').limitToFirst(1).once('value');
+      // Tomar el primer usuario distinto a mí
+      const snap = await queueRef.orderByChild('ts').limitToFirst(20).once('value');
       const val = snap.val();
       const entries = val ? Object.entries(val) : [];
 
-      if (entries.length === 0) {
-        const myNode = queueRef.push({ uid: userId, ts: Date.now() });
+      const candidate = entries.find(([key, data]) => data && data.uid && data.uid !== userId);
+      if (!candidate) {
+        // No hay: entrar a la cola y esperar invite
+        if (!queueNodeRef) {
+          queueNodeRef = queueRef.push({ uid: userId, ts: Date.now() });
+          queueNodeRef.onDisconnect().remove();
+        } else {
+          queueNodeRef.set({ uid: userId, ts: Date.now() });
+        }
         setMatch('esperando');
-        log('No hay usuarios. Entraste a la cola.');
-        myNode.onDisconnect().remove();
-
+        log('En cola. Esperando otro usuario...');
+        // Escuchar invites
         inviteListener = invitesRef.child(userId).on('value', async (s) => {
           const invite = s.val();
           if (invite && invite.roomId) {
-            await myNode.remove().catch(()=>{});
             await invitesRef.child(userId).remove().catch(()=>{});
             currentRoomId = invite.roomId;
             role = 'callee';
             setRoom(currentRoomId);
-            log(`Invite recibido: room ${currentRoomId}.`);
+            log(`Invite recibido a room ${currentRoomId}.`);
             await startCalleeFlow(currentRoomId);
           }
         });
         return;
       }
 
-      const [key, data] = entries[0];
-      if (!data || data.uid === userId) {
-        await queueRef.push({ uid: userId, ts: Date.now() });
-        setMatch('esperando');
-        log('Esperando otro usuario...');
-        return;
-      }
+      // Emparejar con el candidato
+      const [key, data] = candidate;
       await queueRef.child(key).remove().catch(()=>{});
-
       currentRoomId = `r_${Math.random().toString(36).slice(2,10)}`;
       role = 'caller';
       setRoom(currentRoomId);
+
       await invitesRef.child(data.uid).set({ roomId: currentRoomId, from: userId, ts: Date.now() });
       log(`Room ${currentRoomId} creada. Invite enviado a ${data.uid}.`);
 
       await startCallerFlow(currentRoomId);
     }
 
-    // ======= Caller flow =======
+    // ======= Flujos =======
     async function startCallerFlow(roomId) {
       await initMedia();
       createPeerConnection();
@@ -433,6 +321,7 @@
       await roomsRef.child(roomId).child('offer').set({
         sdp: offer.sdp, type: offer.type, ts: Date.now(), by: userId
       });
+      setIce('gathering');
       setConn('oferta enviada');
       log('Oferta enviada. Esperando respuesta...');
 
@@ -442,16 +331,15 @@
         if (ans && ans.sdp && pc && !pc.remoteDescription) {
           await pc.setRemoteDescription(new RTCSessionDescription(ans));
           setConn('conectando...');
-          log('Respuesta recibida. Estableciendo conexión...');
+          log('Respuesta recibida. Conectando...');
         }
       };
       answerRef.on('value', handler);
       listeners.push(() => answerRef.off('value', handler));
 
-      enableControlsInCall();
+      nextBtn.disabled = false; endBtn.disabled = false; retryBtn.disabled = false;
     }
 
-    // ======= Callee flow =======
     async function startCalleeFlow(roomId) {
       await initMedia();
       createPeerConnection();
@@ -470,66 +358,29 @@
       await roomsRef.child(roomId).child('answer').set({
         sdp: answer.sdp, type: answer.type, ts: Date.now(), by: userId
       });
+      setIce('gathering');
       setConn('respuesta enviada');
       log('Respuesta enviada. Conectando...');
 
-      enableControlsInCall();
-    }
-
-    // ======= ICE restart =======
-    async function maybeRestartIce(manual = false) {
-      if (!pc || !currentRoomId) return;
-      if (!manual && iceRestartAttempts >= ICE_RESTART_MAX) {
-        log('Reintentos ICE agotados. Es probable que necesites un servidor TURN.');
-        remoteDot.className = 'dot red';
-        return;
-      }
-      iceRestartAttempts += manual ? 0 : 1;
-      try {
-        log('Iniciando ICE restart...');
-        const offer = await pc.createOffer({ iceRestart: true });
-        await pc.setLocalDescription(offer);
-        await roomsRef.child(currentRoomId).child('offer').set({
-          sdp: offer.sdp, type: offer.type, ts: Date.now(), by: userId, restart: true
-        });
-        setIce('restarting');
-      } catch (e) {
-        log('Fallo al reiniciar ICE: ' + e.message);
-      }
+      nextBtn.disabled = false; endBtn.disabled = false; retryBtn.disabled = false;
     }
 
     // ======= Controles =======
-    function enableControlsInCall() {
-      startBtn.disabled = true;
-      nextBtn.disabled = false;
-      endBtn.disabled = false;
-      muteBtn.disabled = false;
-      cameraBtn.disabled = false;
-      restartIceBtn.disabled = false;
-    }
-    function resetControls() {
-      startBtn.disabled = false;
-      nextBtn.disabled = true;
-      endBtn.disabled = true;
-      muteBtn.disabled = true;
-      cameraBtn.disabled = true;
-      restartIceBtn.disabled = true;
-    }
-
-    async function start() {
-      try {
-        await initMedia();
-        await findMatch();
-      } catch (e) {
-        console.error(e);
-        log('Error al iniciar: ' + e.message);
-      }
-    }
-
     async function next() {
-      log('Siguiente: cerrando y buscando nuevo match.');
+      log('Next: saltando al siguiente usuario.');
       await endCall(false);
+      // Asegura que vuelvo a la cola si no encuentro a nadie
+      await ensureInQueue();
       await findMatch();
+    }
+
+    async function ensureInQueue() {
+      if (!queueNodeRef) {
+        queueNodeRef = queueRef.push({ uid: userId, ts: Date.now() });
+        queueNodeRef.onDisconnect().remove();
+      } else {
+        await queueNodeRef.set({ uid: userId, ts: Date.now() });
+      }
     }
 
     function toggleMute() {
@@ -544,9 +395,23 @@
       cameraBtn.textContent = enabled ? 'Camera on' : 'Camera off';
     }
 
+    async function retry() {
+      if (!pc || !currentRoomId) { log('Nada que reintentar.'); return; }
+      try {
+        const offer = await pc.createOffer({ iceRestart: true });
+        await pc.setLocalDescription(offer);
+        await roomsRef.child(currentRoomId).child('offer').set({
+          sdp: offer.sdp, type: offer.type, ts: Date.now(), by: userId, restart: true
+        });
+        setIce('restarting');
+        log('ICE restart enviado.');
+      } catch (e) {
+        log('Fallo al reintentar: ' + e.message);
+      }
+    }
+
     async function endCall(clearRoom = true) {
       cleanupListeners();
-      iceRestartAttempts = 0;
 
       try {
         if (pc) {
@@ -562,7 +427,6 @@
 
       if (remoteVideo.srcObject) { remoteVideo.srcObject.getTracks().forEach(t => t.stop()); }
       remoteVideo.srcObject = null;
-      remoteDot.className = 'dot';
 
       if (currentRoomId && clearRoom) {
         try { await roomsRef.child(currentRoomId).remove(); } catch(e) {}
@@ -571,25 +435,34 @@
       role = null;
       setRoom(null);
       setMatch('—');
-      setConn('offline');
+      setConn('idle');
       setIce('—');
-      resetControls();
+
+      nextBtn.disabled = true; endBtn.disabled = true; retryBtn.disabled = true;
+    }
+
+    // ======= Auto-inicio =======
+    async function boot() {
+      setConn('iniciando...');
+      try {
+        await initMedia();
+        await ensureInQueue();
+        // Intento inmediato de match; si no hay, quedo escuchando invites
+        await findMatch();
+      } catch (e) {
+        log('Error al iniciar: ' + e.message);
+      }
     }
 
     // ======= Wire UI =======
-    startBtn.addEventListener('click', start);
     nextBtn.addEventListener('click', next);
     endBtn.addEventListener('click', () => endCall(true));
     muteBtn.addEventListener('click', toggleMute);
     cameraBtn.addEventListener('click', toggleCamera);
-    restartIceBtn.addEventListener('click', () => maybeRestartIce(true));
+    retryBtn.addEventListener('click', retry);
 
-    // Estado inicial
-    setConn('offline');
-    setIce('—');
-    setMatch('—');
-    setRoom(null);
-    log('Pulsa Start en dos pestañas/dispositivos para probar el emparejamiento.');
+    // Autostart al cargar
+    document.addEventListener('DOMContentLoaded', boot);
   </script>
 </body>
 </html>
