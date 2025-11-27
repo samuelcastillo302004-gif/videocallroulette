@@ -1,166 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Random Video — Auto Connect</title>
-  <style>
-    body { margin:0; font-family:Inter, sans-serif; background:#0a0c12; color:#e8ecf3 }
-    .topbar { padding:12px 18px; background:#111722; color:#97a3b6; display:flex; justify-content:space-between }
-    .videos { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:14px }
-    video { width:100%; height:100%; object-fit:cover; background:#000; border-radius:12px }
-    .controls { display:flex; gap:10px; padding:12px }
-    button { padding:10px 14px; border-radius:8px; cursor:pointer }
-    .danger { background:#ff466b; border:none; color:#fff }
-    .ghost { background:#222a38; border:none; color:#e8ecf3 }
-    .log { padding:12px; font-size:12px; height:140px; overflow:auto; background:#111722; color:#97a3b6 }
-  </style>
+  <title>VideoCall Random</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <div class="topbar">
-    <div>Random Video — Auto</div>
-    <div id="status">Estado: init</div>
-  </div>
-  <div class="videos">
-    <video id="localVideo" autoplay playsinline muted></video>
-    <video id="remoteVideo" autoplay playsinline></video>
-  </div>
-  <div class="controls">
-    <button class="ghost" id="retryBtn" disabled>Reintentar ICE</button>
-    <button class="danger" id="endBtn" disabled>End</button>
-  </div>
-  <div class="log" id="log"></div>
+  <header class="topbar">
+    <div class="brand">VideoCall Random</div>
+    <div class="status">
+      <span id="statusDot" class="dot offline"></span>
+      <span id="statusText">Desconectado</span>
+    </div>
+  </header>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBWqJI7OKZcEjN2CeTZxPi8pWzo8rBMIkI",
-      authDomain: "nearmemarketplace-ce82b.firebaseapp.com",
-      projectId: "nearmemarketplace-ce82b",
-      storageBucket: "nearmemarketplace-ce82b.firebasestorage.app",
-      messagingSenderId: "711845990024",
-      appId: "1:711845990024:web:7948ad5e5606765514d93d",
-      measurementId: "G-X75JHEDQJ0",
-      databaseURL: "https://nearmemarketplace-ce82b-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  <main class="layout">
+    <section class="video-area">
+      <div class="video-wrapper">
+        <video id="remoteVideo" playsinline autoplay class="remote"></video>
+        <video id="localVideo" playsinline autoplay muted class="local"></video>
+        <div class="overlay">
+          <div id="matchInfo" class="badge">Buscando pareja...</div>
+        </div>
+      </div>
 
-    const logEl = document.getElementById('log');
-    const statusEl = document.getElementById('status');
-    const localVideo = document.getElementById('localVideo');
-    const remoteVideo = document.getElementById('remoteVideo');
-    const retryBtn = document.getElementById('retryBtn');
-    const endBtn = document.getElementById('endBtn');
+      <div class="controls">
+        <button id="btnConnect" class="primary">Conectar</button>
+        <button id="btnNext" class="secondary" disabled>Siguiente</button>
+        <button id="btnHangup" class="danger" disabled>Terminar</button>
+        <button id="btnToggleMic" class="ghost" disabled>Mic on/off</button>
+        <button id="btnToggleCam" class="ghost" disabled>Cam on/off</button>
+      </div>
+    </section>
 
-    const log = msg => { const ts=new Date().toLocaleTimeString(); logEl.innerHTML=`[${ts}] ${msg}<br>`+logEl.innerHTML; };
-    const setStatus = t => statusEl.textContent=`Estado: ${t}`;
+    <aside class="chat">
+      <div class="chat-header">
+        Chat
+      </div>
+      <div id="chatLog" class="chat-log"></div>
+      <form id="chatForm" class="chat-form">
+        <input id="chatInput" type="text" placeholder="Escribe un mensaje..." autocomplete="off"/>
+        <button type="submit" class="primary" disabled>Enviar</button>
+      </form>
+    </aside>
+  </main>
 
-    const me = `u_${Math.random().toString(36).slice(2,10)}`;
-    let pc=null, localStream=null, remoteStream=null, currentPeer=null;
-    let pendingCandidates=[];
+  <footer class="footer">
+    <small>Demo WebRTC + WebSocket — Sin Firebase</small>
+  </footer>
 
-    const presenceRef=db.ref('/presence');
-    const offersRef=(from,to)=>db.ref(`/signal/${to}/offers/${from}`);
-    const answersRef=(from,to)=>db.ref(`/signal/${to}/answers/${from}`);
-    const candOutRef=(from,to)=>db.ref(`/signal/${to}/candidates/${from}`);
-    const candInRef=(from,to)=>db.ref(`/signal/${me}/candidates/${from}`);
-
-    const iceServers=[{urls:["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"]}];
-
-    async function initMedia(){
-      if(localStream) return localStream;
-      localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:true});
-      localVideo.srcObject=localStream;
-      setStatus('cam/mic ok');
-      return localStream;
-    }
-
-    function createPC(peerId){
-      pc=new RTCPeerConnection({iceServers});
-      remoteStream=new MediaStream();
-      remoteVideo.srcObject=remoteStream;
-      localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
-      pc.ontrack=ev=>ev.streams[0].getTracks().forEach(t=>remoteStream.addTrack(t));
-      pc.onicecandidate=ev=>{
-        if(ev.candidate && peerId){ candOutRef(me,peerId).push(ev.candidate.toJSON()); }
-      };
-      pc.oniceconnectionstatechange=()=>setStatus(pc.iceConnectionState);
-    }
-
-    async function startCaller(peerId){
-      currentPeer=peerId; createPC(peerId);
-      // buffer ICE
-      candInRef(peerId,me).on('child_added',snap=>{
-        const cand=new RTCIceCandidate(snap.val());
-        if(pc.remoteDescription){ pc.addIceCandidate(cand).catch(e=>log(e.message)); }
-        else pendingCandidates.push(cand);
-      });
-      // respuesta
-      answersRef(peerId,me).on('value',async snap=>{
-        const ans=snap.val();
-        if(ans && ans.sdp && !pc.remoteDescription){
-          await pc.setRemoteDescription(new RTCSessionDescription(ans));
-          pendingCandidates.forEach(c=>pc.addIceCandidate(c).catch(e=>log(e.message)));
-          pendingCandidates=[];
-          setStatus('conectando...');
-        }
-      });
-      const offer=await pc.createOffer();
-      await pc.setLocalDescription(offer);
-      await offersRef(me,peerId).set({sdp:offer.sdp,type:offer.type,ts:Date.now()});
-      setStatus('oferta enviada');
-    }
-
-    async function startCallee(peerId){
-      currentPeer=peerId; createPC(peerId);
-      const offSnap=await offersRef(peerId,me).once('value');
-      const offer=offSnap.val();
-      if(!offer||!offer.sdp){ log('Oferta no encontrada'); return; }
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
-      pendingCandidates.forEach(c=>pc.addIceCandidate(c).catch(e=>log(e.message)));
-      pendingCandidates=[];
-      const answer=await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      await answersRef(me,peerId).set({sdp:answer.sdp,type:answer.type,ts:Date.now()});
-      setStatus('respuesta enviada');
-      candInRef(peerId,me).on('child_added',snap=>{
-        const cand=new RTCIceCandidate(snap.val());
-        if(pc.remoteDescription){ pc.addIceCandidate(cand).catch(e=>log(e.message)); }
-        else pendingCandidates.push(cand);
-      });
-    }
-
-    async function connectPeer(){
-      const snap=await presenceRef.once('value');
-      const val=snap.val()||{};
-      const peers=Object.keys(val).filter(uid=>uid!==me);
-      const peerId=peers[0];
-      if(!peerId){ setStatus('esperando peer'); return; }
-      const existingOffer=await offersRef(peerId,me).once('value');
-      if(existingOffer.val() && existingOffer.val().sdp){ await startCallee(peerId); }
-      else { await startCaller(peerId); }
-    }
-
-    async function announcePresence(){
-      const myRef=presenceRef.child(me);
-      await myRef.set({uid:me,ts:Date.now()});
-      myRef.onDisconnect().remove();
-      presenceRef.on('value',async snap=>{
-        const val=snap.val()||{};
-        const peers=Object.keys(val).filter(uid=>uid!==me);
-        if(!currentPeer && peers.length>0){ await connectPeer(); }
-      });
-    }
-
-    async function endCall(){
-      if(pc){ pc.close(); pc=null; }
-      remoteVideo.srcObject=null; currentPeer=null; setStatus('idle');
-    }
-
-    async function retryICE(){
-      if(!pc||!currentPeer) return;
-      const offer=await pc.createOffer({iceRestart:true});
-      await pc.setLocalDescription(offer);
-      await offersRef(me,currentPeer).set({sdp:offer.sdp,type:offer.type,
+  <script src="app.js"></script>
+</body>
+</html>
