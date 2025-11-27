@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Random Multi Video Calls</title>
+  <title>Random Video — Auto Connect</title>
   <style>
     :root {
       --bg: #07090f; --panel: #0f141d; --card: #121827; --border: #222a38;
-      --text: #e8ecf3; --muted: #97a3b6; --accent: #61eaff; --accent2: #7cff8b;
-      --danger: #ff466b; --warn: #ffb020; --shadow: 0 24px 48px rgba(0,0,0,0.4);
+      --text: #e8ecf3; --muted: #97a3b6; --accent: #61eaff; --danger: #ff466b;
+      --shadow: 0 24px 48px rgba(0,0,0,0.4);
     }
     * { box-sizing: border-box }
     html, body { height: 100% }
@@ -21,31 +21,25 @@
     }
     .topbar {
       position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 20px; backdrop-filter: saturate(120%) blur(8px);
+      padding: 12px 18px; backdrop-filter: saturate(120%) blur(8px);
       background: rgba(10,12,16,0.65); border-bottom: 1px solid var(--border);
     }
-    .brand { display: flex; align-items: center; gap: 12px }
+    .brand { display: flex; align-items: center; gap: 10px }
     .logo {
-      width: 36px; height: 36px; border-radius: 12px; position: relative;
-      border: 1px solid #273247; background: radial-gradient(180px 120px at 30% 20%, #172235, #0f1827 60%);
+      width: 34px; height: 34px; border-radius: 10px; position: relative;
+      border: 1px solid #273247; background: radial-gradient(160px 100px at 30% 20%, #172235, #0f1827 60%);
       box-shadow: inset 0 0 24px rgba(0,212,255,0.18);
     }
     .logo::after { content:""; position:absolute; right:8px; top:8px; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 12px var(--accent) }
-    .brand h1 { margin:0; font-size:16px; letter-spacing:.4px }
-    .status { display:flex; gap:8px; flex-wrap:wrap }
-    .pill {
-      display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px;
-      background:#0e1320; border:1px solid var(--border); color:var(--muted); font-size:12px;
-    }
+    .status { display:flex; gap:8px; flex-wrap:wrap; color: var(--muted); font-size:12px }
+    .pill { padding:5px 10px; border-radius:999px; background:#0e1320; border:1px solid var(--border) }
 
-    .container { max-width: 1200px; margin: 18px auto; padding: 0 18px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px }
-    @media (max-width: 980px) { .container { grid-template-columns: 1fr } }
-
+    .container { max-width: 1100px; margin: 18px auto; padding: 0 18px }
     .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow) }
-    .panel-header { padding: 14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); background: linear-gradient(180deg,#101522,#0f141d) }
-    .badge { padding:6px 10px; border:1px dashed var(--border); border-radius:999px; font-size:12px; color:var(--muted) }
+    .panel-header { padding: 12px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); background: linear-gradient(180deg,#101522,#0f141d) }
 
-    .videos { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; padding:14px }
+    .videos { display:grid; grid-template-columns: 1fr 1fr; gap:12px; padding:14px }
+    @media (max-width: 820px) { .videos { grid-template-columns: 1fr } }
     .video-card {
       position:relative; border-radius:12px; overflow:hidden; background:var(--card); border:1px solid var(--border);
       aspect-ratio: 16/10; box-shadow: inset 0 0 30px rgba(0,0,0,0.35);
@@ -55,34 +49,28 @@
       position:absolute; left:10px; bottom:10px; background:rgba(16,20,32,0.72); padding:6px 10px;
       border:1px solid var(--border); border-radius:8px; font-size:12px; color:var(--muted); backdrop-filter: blur(4px);
     }
-    .controls { display:flex; flex-wrap:wrap; gap:10px; padding:14px; border-top:1px solid var(--border); background:#0f131d }
+
+    .log { padding:12px 14px; font-size:12px; color:var(--muted); height:140px; overflow:auto; border-top:1px solid var(--border); background:#0e121b }
+    .controls { display:flex; gap:10px; padding:12px 14px; border-top:1px solid var(--border); background:#0f131d }
     button {
       appearance:none; border:1px solid #2a3242; color:var(--text); background:#121826; padding:10px 14px;
       border-radius:11px; font-weight:600; font-size:14px; transition: transform .16s ease, box-shadow .16s ease, filter .16s ease; cursor:pointer;
     }
     button:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,0,0,0.25) }
-    .primary { background: linear-gradient(180deg,#61eaff,#00a8ff); border:none; color:#06121a }
     .danger { background: linear-gradient(180deg,#ff8aa0,#ff466b); border:none; color:#16060a }
     .ghost { background:#131a28; border-color:#2a3242 }
-    .warn { background: linear-gradient(180deg,#ffd98b,#ffb020); border:none; color:#2a1e0a }
-
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding: 12px }
-    @media (max-width:780px){ .grid { grid-template-columns: 1fr } }
-    .log { padding:12px 16px; font-size:12px; color:var(--muted); height:160px; overflow:auto; border-top:1px solid var(--border); background:#0e121b }
-    .list { padding: 8px 12px; display:flex; flex-wrap:wrap; gap:6px }
-    .chip { padding:6px 10px; border-radius:999px; background:#121a2a; border:1px solid var(--border); font-size:12px; color:var(--muted) }
   </style>
 </head>
 <body>
   <div class="topbar">
     <div class="brand">
       <div class="logo"></div>
-      <h1>Random Multi Video Calls</h1>
+      <strong>Random Video — Auto</strong>
     </div>
     <div class="status">
       <span class="pill" id="connStatus">Estado: init</span>
       <span class="pill" id="iceStatus">ICE: —</span>
-      <span class="pill" id="matchStatus">Peers: 0</span>
+      <span class="pill" id="peerBadge">Peer: —</span>
       <span class="pill" id="meBadge">UID: —</span>
     </div>
   </div>
@@ -90,41 +78,24 @@
   <div class="container">
     <section class="panel">
       <div class="panel-header">
-        <strong>Videollamadas</strong>
-        <span class="badge">Autoconexión malla P2P + Next</span>
+        <span>Videollamada automática uno-a-uno</span>
+        <span style="font-size:12px;color:#97a3b6">Abre la página en dos dispositivos/pestañas y conecta solo</span>
       </div>
-
       <div class="videos">
         <div class="video-card">
           <video id="localVideo" autoplay playsinline muted></video>
           <div class="label">Tú</div>
         </div>
-        <div id="remoteGrid" class="videos"></div>
+        <div class="video-card">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <div class="label">Random</div>
+        </div>
       </div>
-
       <div class="controls">
-        <button class="primary" id="nextBtn" disabled>Next</button>
-        <button class="ghost" id="muteBtn" disabled>Mute</button>
-        <button class="ghost" id="cameraBtn" disabled>Camera off</button>
-        <button class="warn" id="retryBtn" disabled>Reintentar ICE</button>
+        <button class="ghost" id="retryBtn" disabled>Reintentar ICE</button>
         <button class="danger" id="endBtn" disabled>End</button>
       </div>
       <div class="log" id="log"></div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <strong>Lobby y estado</strong>
-        <span class="badge">Firebase RTDB</span>
-      </div>
-      <div class="grid">
-        <div>
-          <div class="chip">Signaling per-user</div>
-          <div class="chip">Trickle ICE</div>
-          <div class="chip">Auto-start</div>
-        </div>
-        <div id="peerList" class="list"></div>
-      </div>
     </section>
   </div>
 
@@ -133,7 +104,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // ======= Firebase (tu config) =======
+    // ===== Firebase (tu config) =====
     const firebaseConfig = {
       apiKey: "AIzaSyBWqJI7OKZcEjN2CeTZxPi8pWzo8rBMIkI",
       authDomain: "nearmemarketplace-ce82b.firebaseapp.com",
@@ -147,331 +118,270 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ======= UI =======
+    // ===== UI =====
     const logEl = document.getElementById('log');
     const localVideo = document.getElementById('localVideo');
-    const remoteGrid = document.getElementById('remoteGrid');
-    const peerListEl = document.getElementById('peerList');
-    const nextBtn = document.getElementById('nextBtn');
-    const muteBtn = document.getElementById('muteBtn');
-    const cameraBtn = document.getElementById('cameraBtn');
-    const retryBtn = document.getElementById('retryBtn');
-    const endBtn = document.getElementById('endBtn');
+    const remoteVideo = document.getElementById('remoteVideo');
     const connStatus = document.getElementById('connStatus');
     const iceStatus = document.getElementById('iceStatus');
-    const matchStatus = document.getElementById('matchStatus');
+    const peerBadge = document.getElementById('peerBadge');
     const meBadge = document.getElementById('meBadge');
+    const retryBtn = document.getElementById('retryBtn');
+    const endBtn = document.getElementById('endBtn');
 
-    const log = (msg) => {
-      const ts = new Date().toLocaleTimeString();
-      logEl.innerHTML = `[${ts}] ${msg}<br>` + logEl.innerHTML;
-    };
-    const setConn = (txt) => connStatus.textContent = `Estado: ${txt}`;
-    const setIce = (txt) => iceStatus.textContent = `ICE: ${txt}`;
-    const setPeersCount = (n) => matchStatus.textContent = `Peers: ${n}`;
-    const setMe = (id) => meBadge.textContent = `UID: ${id}`;
+    const log = (msg) => { const ts = new Date().toLocaleTimeString(); logEl.innerHTML = `[${ts}] ${msg}<br>` + logEl.innerHTML; };
+    const setConn = (t) => connStatus.textContent = `Estado: ${t}`;
+    const setIce = (t) => iceStatus.textContent = `ICE: ${t}`;
+    const setPeer = (t) => peerBadge.textContent = `Peer: ${t || '—'}`;
+    const setMe = (t) => meBadge.textContent = `UID: ${t || '—'}`;
 
-    // ======= Estado =======
+    // ===== Estado =====
     const me = `u_${Math.random().toString(36).slice(2,10)}`;
     setMe(me);
-
+    let pc = null;
     let localStream = null;
-    let peerPCs = new Map();      // peerId -> RTCPeerConnection
-    let peerVideos = new Map();   // peerId -> <video>
-    let peerStates = new Map();   // peerId -> {connected:boolean, ice:string}
-    let listeners = [];           // desuscripción
-    let booted = false;
-    let peerOrder = [];           // para Next
-    let nextIndex = 0;
+    let remoteStream = null;
+    let currentPeer = null;
+    let listeners = [];
+    let presenceUnsub = null;
 
-    // ICE servers (añade TURN si necesitas conexión garantizada entre NATs)
-    const iceServers = [
-      { urls: ["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"] }
-      // { urls: "turn:TU_DOMINIO:3478", username: "USER", credential: "PASS" }
-    ];
-
-    // Media
-    const mediaConstraints = { audio: true, video: { width: { ideal: 1280 }, height: { ideal: 720 } } };
-
-    // Signaling refs por usuario
-    const presenceRef = db.ref('/presence'); // lista global de usuarios
+    // ===== RTDB refs =====
+    const presenceRef = db.ref('/presence'); // usuarios presentes
     const offersRef = (from, to) => db.ref(`/signal/${to}/offers/${from}`);
     const answersRef = (from, to) => db.ref(`/signal/${to}/answers/${from}`);
-    const candRefOut = (from, to, role) => db.ref(`/signal/${to}/candidates/${from}/${role}`);
-    const candRefIn = (other, me, role) => db.ref(`/signal/${me}/candidates/${other}/${role}`);
+    const candOutRef = (from, to) => db.ref(`/signal/${to}/candidates/${from}`);
+    const candInRef = (from, to) => db.ref(`/signal/${to}/candidates/${from}`);
 
-    // ======= Media init =======
+    // ===== WebRTC =====
+    const iceServers = [
+      { urls: ["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"] }
+      // Para conexión garantizada entre redes móviles/NAT estrictos añade:
+      // { urls: "turn:TU_DOMINIO:3478", username: "USER", credential: "PASS" }
+    ];
+    const mediaConstraints = { audio: true, video: { width: { ideal: 1280 }, height: { ideal: 720 } } };
+
     async function initMedia() {
       if (localStream) return localStream;
       try {
         localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
         localVideo.srcObject = localStream;
         setConn('cam/mic ok');
-        muteBtn.disabled = false; cameraBtn.disabled = false;
         return localStream;
       } catch (e) {
-        setConn('media error'); log('Error media: ' + e.message);
-        throw e;
+        setConn('media error'); log('Error media: ' + e.message); throw e;
       }
     }
 
-    // ======= Presence =======
+    function createPC() {
+      pc = new RTCPeerConnection({ iceServers });
+      remoteStream = new MediaStream();
+      remoteVideo.srcObject = remoteStream;
+
+      localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+
+      pc.ontrack = (ev) => {
+        ev.streams[0]?.getTracks().forEach(t => remoteStream.addTrack(t));
+      };
+
+      pc.onicecandidate = (ev) => {
+        if (ev.candidate && currentPeer) {
+          candOutRef(me, currentPeer).push(ev.candidate.toJSON());
+        }
+        if (!ev.candidate) setIce('complete');
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        const st = pc.iceConnectionState;
+        setIce(st);
+        if (st === 'connected' || st === 'completed') {
+          setConn('conectado');
+          endBtn.disabled = false; retryBtn.disabled = false;
+        } else if (st === 'failed') {
+          setConn('failed'); retryBtn.disabled = false;
+        }
+      };
+
+      pc.onconnectionstatechange = () => {
+        setConn(pc.connectionState);
+      };
+    }
+
+    function cleanupPC() {
+      try {
+        if (pc) {
+          pc.ontrack = null; pc.onicecandidate = null; pc.oniceconnectionstatechange = null; pc.onconnectionstatechange = null;
+          pc.getSenders().forEach(s => { try { pc.removeTrack(s); } catch(e){} });
+          pc.close();
+        }
+      } catch(e) {}
+      pc = null;
+      if (remoteVideo.srcObject) { remoteVideo.srcObject.getTracks().forEach(t => t.stop()); }
+      remoteVideo.srcObject = null;
+      setIce('—'); setConn('idle');
+    }
+
+    function detachListeners() {
+      listeners.forEach(unsub => { try { unsub(); } catch(e){} });
+      listeners = [];
+    }
+
+    // ===== Señalización (uno a uno) =====
+    async function startCallerFlow(peerId) {
+      currentPeer = peerId;
+      createPC();
+
+      // Escuchar respuesta del peer
+      const ansRef = answersRef(peerId, me);
+      const ansHandler = ansRef.on('value', async snap => {
+        const ans = snap.val();
+        if (ans && ans.sdp && pc && !pc.currentRemoteDescription) {
+          await pc.setRemoteDescription(new RTCSessionDescription(ans));
+          setConn('conectando...');
+          log('Respuesta recibida de ' + peerId);
+        }
+      });
+      listeners.push(() => ansRef.off('value', ansHandler));
+
+      // Escuchar ICE remotos
+      const candIn = candInRef(peerId, me);
+      const candHandler = candIn.on('child_added', async s => {
+        const cand = s.val();
+        try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) { log('ICE add err: ' + e.message); }
+      });
+      listeners.push(() => candIn.off('child_added', candHandler));
+
+      // Crear y enviar oferta
+      const offer = await pc.createOffer({ offerToReceiveAudio: 1, offerToReceiveVideo: 1 });
+      await pc.setLocalDescription(offer);
+      await offersRef(me, peerId).set({ sdp: offer.sdp, type: offer.type, ts: Date.now() });
+      setIce('gathering');
+      setConn('oferta enviada');
+      setPeer(peerId);
+      log('Oferta enviada a ' + peerId);
+    }
+
+    async function startCalleeFlow(peerId) {
+      currentPeer = peerId;
+      createPC();
+
+      // Escuchar oferta del peer
+      const offRef = offersRef(peerId, me);
+      const offSnap = await offRef.once('value');
+      const offer = offSnap.val();
+      if (!offer || !offer.sdp) { log('Oferta no encontrada de ' + peerId); return; }
+      await pc.setRemoteDescription(new RTCSessionDescription(offer));
+
+      // Crear y enviar respuesta
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      await answersRef(me, peerId).set({ sdp: answer.sdp, type: answer.type, ts: Date.now() });
+      setIce('gathering');
+      setConn('respuesta enviada');
+      setPeer(peerId);
+      log('Respuesta enviada a ' + peerId);
+
+      // Escuchar ICE remotos
+      const candIn = candInRef(peerId, me);
+      const candHandler = candIn.on('child_added', async s => {
+        const cand = s.val();
+        try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) { log('ICE add err: ' + e.message); }
+      });
+      listeners.push(() => candIn.off('child_added', candHandler));
+    }
+
+    async function connectToFirstAvailablePeer() {
+      // Obtén todos los presentes excepto yo
+      const snap = await presenceRef.once('value');
+      const val = snap.val() || {};
+      const peers = Object.keys(val).filter(uid => uid !== me);
+      const peerId = peers[0];
+
+      if (!peerId) {
+        setPeer('—'); log('En espera. No hay peers aún.');
+        return;
+      }
+
+      // Intenta ser caller; si el otro ya me llamó, entonces seré callee
+      const existingOfferToMe = await offersRef(peerId, me).once('value');
+      if (existingOfferToMe.val() && existingOfferToMe.val().sdp) {
+        await startCalleeFlow(peerId);
+      } else {
+        await startCallerFlow(peerId);
+      }
+    }
+
+    // ===== Presence (auto) =====
     async function announcePresence() {
       const myRef = presenceRef.child(me);
       await myRef.set({ uid: me, ts: Date.now() });
       myRef.onDisconnect().remove();
 
-      // Escucha en vivo la lista de usuarios
-      presenceRef.on('value', snap => {
+      // Escucha cambios en presencia para auto conectar
+      presenceUnsub = presenceRef.on('value', async (snap) => {
         const val = snap.val() || {};
         const peers = Object.keys(val).filter(uid => uid !== me);
-        setPeersCount(peers.length);
-        renderPeerList(peers);
-        // Autoconecta con todos los que no estén conectados aún
-        peers.forEach(uid => {
-          if (!peerPCs.has(uid)) {
-            connectToPeer(uid);
-          }
-        });
-        // Si alguien se fue, limpia
-        [...peerPCs.keys()].forEach(uid => {
-          if (!peers.includes(uid)) {
-            teardownPeer(uid);
-          }
-        });
-        // Orden para Next
-        peerOrder = peers.slice().sort();
-      });
-    }
-
-    function renderPeerList(peers) {
-      peerListEl.innerHTML = '';
-      peers.forEach(uid => {
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        const state = peerStates.get(uid);
-        chip.textContent = `${uid} ${state ? `(${state.connected ? 'on' : state.ice || 'wait'})` : ''}`;
-        peerListEl.appendChild(chip);
-      });
-    }
-
-    // ======= Peer connection =======
-    function createPC(peerId) {
-      const pc = new RTCPeerConnection({ iceServers });
-      localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
-
-      // Remote stream
-      const remoteStream = new MediaStream();
-      pc.ontrack = (ev) => {
-        ev.streams[0]?.getTracks().forEach(t => remoteStream.addTrack(t));
-        ensurePeerVideo(peerId).srcObject = remoteStream;
-      };
-
-      pc.onicecandidate = (ev) => {
-        if (ev.candidate) {
-          candRefOut(me, peerId, 'local').push(ev.candidate.toJSON());
+        if (!currentPeer && peers.length > 0) {
+          // Si no tengo peer, conecto con el primero
+          await connectToFirstAvailablePeer();
         }
-      };
-
-      pc.oniceconnectionstatechange = () => {
-        const st = pc.iceConnectionState;
-        const s = peerStates.get(peerId) || {};
-        s.ice = st;
-        s.connected = (st === 'connected' || st === 'completed');
-        peerStates.set(peerId, s);
-        renderPeerList([...peerStates.keys()]);
-        setIce(st);
-      };
-
-      return pc;
+        // Si mi peer actual desaparece, limpia y busca otro
+        if (currentPeer && !peers.includes(currentPeer)) {
+          log('Peer salió. Reconectando con otro...');
+          await endCall(false);
+          await connectToFirstAvailablePeer();
+        }
+      });
     }
 
-    function ensurePeerVideo(peerId) {
-      if (peerVideos.has(peerId)) return peerVideos.get(peerId);
-      const wrapper = document.createElement('div');
-      wrapper.className = 'video-card';
-      const video = document.createElement('video');
-      video.autoplay = true; video.playsInline = true;
-      const label = document.createElement('div');
-      label.className = 'label';
-      label.textContent = peerId;
-      wrapper.appendChild(video);
-      wrapper.appendChild(label);
-      remoteGrid.appendChild(wrapper);
-      peerVideos.set(peerId, video);
-      return video;
-    }
-
-    function teardownPeer(peerId) {
-      // PC
-      const pc = peerPCs.get(peerId);
-      if (pc) {
-        try {
-          pc.ontrack = null; pc.onicecandidate = null; pc.oniceconnectionstatechange = null;
-          pc.getSenders().forEach(s => { try { pc.removeTrack(s); } catch(e){} });
-          pc.close();
-        } catch(e) {}
+    // ===== Controles =====
+    async function endCall(clearSignal = true) {
+      detachListeners();
+      cleanupPC();
+      if (clearSignal && currentPeer) {
+        // Limpio mis señales hacia el peer
+        await offersRef(me, currentPeer).remove().catch(()=>{});
+        await answersRef(me, currentPeer).remove().catch(()=>{});
+        await candOutRef(me, currentPeer).remove().catch(()=>{});
+        await candInRef(currentPeer, me).remove().catch(()=>{});
       }
-      peerPCs.delete(peerId);
-      // Video
-      const v = peerVideos.get(peerId);
-      if (v?.srcObject) v.srcObject.getTracks().forEach(t => t.stop());
-      if (v?.parentElement) v.parentElement.remove();
-      peerVideos.delete(peerId);
-      // Signaling cleanup (entradas hacia mí de ese peer)
-      offersRef(peerId, me).remove().catch(()=>{});
-      answersRef(peerId, me).remove().catch(()=>{});
-      candRefIn(peerId, me, 'local').remove().catch(()=>{});
-      candRefIn(peerId, me, 'remote').remove().catch(()=>{});
-      // Estado
-      peerStates.delete(peerId);
-      setPeersCount(peerPCs.size);
+      setPeer('—');
+      currentPeer = null;
+      endBtn.disabled = true; retryBtn.disabled = true;
     }
 
-    // ======= Conectar con un peer =======
-    async function connectToPeer(peerId) {
-      if (!localStream) await initMedia();
-      const pc = createPC(peerId);
-      peerPCs.set(peerId, pc);
-      nextBtn.disabled = false; endBtn.disabled = false; retryBtn.disabled = false;
-
-      // Trickle ICE remoto (candidates que otro nos envía)
-      const candHandler = candRefIn(peerId, me, 'local').on('child_added', async snap => {
-        const cand = snap.val();
-        try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) { log(`ICE cand err (${peerId}): ${e.message}`); }
-      });
-      listeners.push(() => candRefIn(peerId, me, 'local').off('child_added', candHandler));
-
-      // Oferta remota -> si otro inicia
-      const offerHandler = offersRef(peerId, me).on('value', async snap => {
-        const off = snap.val();
-        if (off && off.sdp) {
-          try {
-            if (!pc.currentRemoteDescription) await pc.setRemoteDescription(new RTCSessionDescription(off));
-            const ans = await pc.createAnswer();
-            await pc.setLocalDescription(ans);
-            await answersRef(me, peerId).set({ sdp: ans.sdp, type: ans.type, ts: Date.now() });
-            setConn('answer enviada');
-            log(`Respondí a oferta de ${peerId}.`);
-          } catch (e) { log(`Error setRemote/createAnswer (${peerId}): ${e.message}`); }
-        }
-      });
-      listeners.push(() => offersRef(peerId, me).off('value', offerHandler));
-
-      // Respuesta remota -> si yo inicio
-      const answerHandler = answersRef(peerId, me).on('value', async snap => {
-        const ans = snap.val();
-        if (ans && ans.sdp) {
-          try {
-            if (!pc.currentRemoteDescription) await pc.setRemoteDescription(new RTCSessionDescription(ans));
-            setConn('conectando...');
-            log(`Respuesta de ${peerId} recibida.`);
-          } catch (e) { log(`Error setRemote (answer) (${peerId}): ${e.message}`); }
-        }
-      });
-      listeners.push(() => answersRef(peerId, me).off('value', answerHandler));
-
-      // Mi oferta (yo inicio también para no esperar)
+    async function retryICE() {
+      if (!pc || !currentPeer) return;
       try {
-        const offer = await pc.createOffer({ offerToReceiveAudio: 1, offerToReceiveVideo: 1 });
+        const offer = await pc.createOffer({ iceRestart: true });
         await pc.setLocalDescription(offer);
-        await offersRef(me, peerId).set({ sdp: offer.sdp, type: offer.type, ts: Date.now() });
-        setConn('offer enviada');
-        setIce('gathering');
-        log(`Oferta enviada a ${peerId}.`);
+        await offersRef(me, currentPeer).set({ sdp: offer.sdp, type: offer.type, ts: Date.now(), restart: true });
+        setIce('restarting');
+        log('ICE restart enviado.');
       } catch (e) {
-        log(`Error createOffer (${peerId}): ${e.message}`);
-      }
-
-      // Candidates remotos secundarios (otros rol)
-      const candRemoteHandler = candRefIn(peerId, me, 'remote').on('child_added', async snap => {
-        const cand = snap.val();
-        try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) { log(`ICE cand remote err (${peerId}): ${e.message}`); }
-      });
-      listeners.push(() => candRefIn(peerId, me, 'remote').off('child_added', candRemoteHandler));
-    }
-
-    // ======= Next (skip al siguiente peer) =======
-    async function next() {
-      if (peerOrder.length === 0) { log('No hay peers para saltar.'); return; }
-      const target = peerOrder[nextIndex % peerOrder.length];
-      nextIndex++;
-      log(`Next -> saltando a ${target}`);
-      // Cierra todos excepto el objetivo, y reconecta al objetivo limpio
-      [...peerPCs.keys()].forEach(uid => { if (uid !== target) teardownPeer(uid); });
-      if (!peerPCs.has(target)) {
-        await connectToPeer(target);
+        log('Fallo ICE restart: ' + e.message);
       }
     }
 
-    // ======= Retry ICE global (reinicia ofertas a todos) =======
-    async function retryICEAll() {
-      for (const [peerId, pc] of peerPCs.entries()) {
-        try {
-          const offer = await pc.createOffer({ iceRestart: true });
-          await pc.setLocalDescription(offer);
-          await offersRef(me, peerId).set({ sdp: offer.sdp, type: offer.type, ts: Date.now(), restart: true });
-          setIce('restarting');
-          log(`ICE restart -> ${peerId}`);
-        } catch (e) {
-          log(`ICE restart error (${peerId}): ${e.message}`);
-        }
-      }
-    }
-
-    // ======= Controles =======
-    function toggleMute() {
-      const enabled = localStream.getAudioTracks().some(t => t.enabled);
-      localStream.getAudioTracks().forEach(t => t.enabled = !enabled);
-      muteBtn.textContent = enabled ? 'Unmute' : 'Mute';
-    }
-    function toggleCamera() {
-      const enabled = localStream.getVideoTracks().some(t => t.enabled);
-      localStream.getVideoTracks().forEach(t => t.enabled = !enabled);
-      cameraBtn.textContent = enabled ? 'Camera on' : 'Camera off';
-    }
-
-    async function endAll() {
-      // Limpieza de todos los peers y signaling
-      for (const uid of [...peerPCs.keys()]) teardownPeer(uid);
-      // Limpia mis señales hacia otros
-      const mySignalRef = db.ref(`/signal/${me}`);
-      await mySignalRef.remove().catch(()=>{});
-      setConn('idle'); setIce('—'); setPeersCount(0);
-      nextBtn.disabled = true; retryBtn.disabled = true; endBtn.disabled = true;
-    }
-
-    function detachAllListeners() {
-      listeners.forEach(unsub => { try { unsub(); } catch(e){} });
-      listeners = [];
-    }
-
-    // ======= Auto boot =======
+    // ===== Boot automático =====
     async function boot() {
-      if (booted) return;
-      booted = true;
       setConn('iniciando...');
       try {
         await initMedia();
-        // preparo mis nodos de señalización
+        // prepara mis rutas de señalización
         await db.ref(`/signal/${me}`).set({ ts: Date.now() }).catch(()=>{});
         db.ref(`/signal/${me}`).onDisconnect().remove();
-        // escucho candidates entrantes y los separo por rol (local/remote)
-        // Nota: el flujo createPC ya escucha candRefIn(...,'local') y 'remote'
+        // presencia y autoconexión
         await announcePresence();
-        nextBtn.disabled = false; retryBtn.disabled = false; endBtn.disabled = false;
-      } catch(e) {
+        // intenta conectar si ya hay alguien
+        await connectToFirstAvailablePeer();
+      } catch (e) {
         log('Boot error: ' + e.message);
       }
     }
 
-    // ======= Wire UI =======
-    nextBtn.addEventListener('click', next);
-    retryBtn.addEventListener('click', retryICEAll);
-    endBtn.addEventListener('click', endAll);
-    muteBtn.addEventListener('click', toggleMute);
-    cameraBtn.addEventListener('click', toggleCamera);
-
+    // Wire UI
+    retryBtn.addEventListener('click', retryICE);
+    endBtn.addEventListener('click', () => endCall(true));
     document.addEventListener('DOMContentLoaded', boot);
   </script>
 </body>
