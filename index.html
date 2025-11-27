@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Random Videocall</title>
+  <title>Random Chat</title>
   <style>
     :root {
       --bg: #0b0f1a; --text: #e6e9ef; --muted: #a6adbb;
-      --accent: #7c5cff; --accent2: #00d4ff; --danger: #ff4d6d;
+      --accent: #7c5cff; --accent2: #00d4ff; --danger: #ff4d6d; --success: #2ecc71;
       --card: rgba(255,255,255,0.08); --glass: rgba(255,255,255,0.12);
       --shadow: 0 20px 40px rgba(0,0,0,0.35);
     }
@@ -18,22 +18,48 @@
       background:
         radial-gradient(1000px 600px at 10% 10%, #101735 0%, var(--bg) 60%),
         radial-gradient(800px 500px at 90% 90%, #07121f 0%, var(--bg) 70%);
+      height: 100vh; display: flex; flex-direction: column;
     }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 24px; width: 100%; }
     header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .brand { display: flex; gap: 12px; align-items: center; }
-    .logo { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: var(--shadow); }
+    .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: var(--shadow); }
     .title { font-weight: 700; letter-spacing: .3px; font-size: 18px; }
     .status { padding: 8px 12px; border-radius: 12px; background: var(--glass); backdrop-filter: blur(10px); font-size: 13px; color: var(--muted); box-shadow: var(--shadow); }
-    .grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; }
-    .card {
-      border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.08); box-shadow: var(--shadow); overflow: hidden; min-height: 420px; position: relative;
+    .grid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+    .chat {
+      border-radius: 16px; background: var(--card); border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; height: 68vh;
     }
-    video { width: 100%; height: 100%; object-fit: cover; background: #070b12; }
-    .local { position: absolute; bottom: 12px; right: 12px; width: 26%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 12px 24px rgba(0,0,0,0.45); }
-    .panel { border-radius: 16px; background: var(--card); border: 1px solid rgba(255,255,255,0.08); box-shadow: var(--shadow); padding: 16px; }
-    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .messages {
+      flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    }
+    .msg {
+      max-width: 70%; padding: 10px 12px; border-radius: 14px; font-size: 14px; line-height: 1.5;
+      border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(6px);
+      word-wrap: break-word; white-space: pre-wrap;
+    }
+    .me { align-self: flex-end; background: rgba(124,92,255,0.18); border-color: rgba(124,92,255,0.35); }
+    .them { align-self: flex-start; background: rgba(255,255,255,0.08); }
+    .sys { align-self: center; background: rgba(0,0,0,0.3); font-size: 12px; color: var(--muted); }
+    .msg img {
+      max-width: 100%; border-radius: 12px; display: block;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .composer {
+      display: flex; gap: 10px; padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.25);
+    }
+    input[type="text"] {
+      flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.1); color: var(--text);
+    }
+    .panel {
+      border-radius: 16px; background: var(--card); border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow); padding: 16px; height: 68vh; display: flex; flex-direction: column; gap: 12px;
+    }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; }
     button {
       appearance: none; border: none; cursor: pointer; padding: 12px 14px; border-radius: 12px; font-weight: 600;
       background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid rgba(255,255,255,0.12);
@@ -45,142 +71,131 @@
     .ghost { background: rgba(255,255,255,0.08); }
     .chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); font-size: 13px; color: var(--muted); }
     .ind { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-    .ok { background: #2ecc71; } .warn { background: #f1c40f; } .bad { background: var(--danger); }
-    .log { height: 140px; overflow: auto; font-size: 13px; line-height: 1.5; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,0.08); }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .local { width: 35%; } }
+    .ok { background: var(--success); } .warn { background: #f1c40f; } .bad { background: var(--danger); }
+    .log { flex: 1; overflow: auto; font-size: 12px; line-height: 1.5; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; border: 1px solid rgba(255,255,255,0.08); }
+    .hint { font-size: 12px; color: var(--muted); }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .chat, .panel { height: calc(100vh - 160px); } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo"></div><div class="title">Random Videocall</div>
+        <div class="logo"></div><div class="title">Random Chat</div>
       </div>
       <div id="status" class="status">Listo — pulsa “Conectar” para entrar</div>
     </header>
 
     <div class="grid">
-      <section class="card">
-        <video id="remoteVideo" autoplay playsinline></video>
-        <div class="local"><video id="localVideo" autoplay playsinline muted></video></div>
+      <section class="chat">
+        <div id="messages" class="messages"></div>
+        <div class="composer">
+          <input id="input" type="text" placeholder="Escribe un mensaje…" maxlength="1000" />
+          <input id="file" type="file" accept="image/*" style="display:none" />
+          <button id="btnPhoto" class="ghost">Foto</button>
+          <button id="btnSend" class="primary">Enviar</button>
+        </div>
       </section>
 
       <aside class="panel">
-        <div class="chip"><span id="sigInd" class="ind bad"></span> Signaling</div>
-        <div class="chip" style="margin-left:8px;"><span id="rtcInd" class="ind warn"></span> WebRTC</div>
-
-        <div class="controls">
+        <div>
+          <div class="chip"><span id="sigInd" class="ind bad"></span> Signaling</div>
+          <div class="chip" style="margin-left:8px;"><span id="matchInd" class="ind warn"></span> Match</div>
+        </div>
+        <div class="controls" style="margin-top:12px;">
           <button id="btnConnect" class="primary">Conectar</button>
           <button id="btnNext" class="ghost" disabled>Next</button>
           <button id="btnEnd" class="danger" disabled>Terminar</button>
         </div>
-        <div class="controls">
-          <button id="btnMute" class="ghost" disabled>Mute</button>
-          <button id="btnCam" class="ghost" disabled>Cam Off</button>
-        </div>
-
-        <div style="margin-top:12px;" class="chip">Sala: <span id="room" style="margin-left:6px;color:#fff;">—</span></div>
+        <div class="chip" style="margin-top:12px;">Sala: <span id="room" style="margin-left:6px;color:#fff;">—</span></div>
+        <div class="hint" style="margin-top:8px;">Las fotos se envían al otro usuario sin guardarse. Tamaño máx: 5 MB.</div>
         <div id="log" class="log" style="margin-top:12px;"></div>
       </aside>
     </div>
   </div>
 
   <script>
-    // Cambia esto al dominio de tu servidor de señalización (Render/Railway/VPS)
-    const SIGNAL_URL = 'wss://TU-DOMINIO-O-RENDER.onrender.com';
+    // Cambia esto por tu servidor de señalización (Render/Railway/VPS)
+    const SIGNAL_URL = 'wss://TU-DOMINIO.onrender.com';
+    const MAX_IMAGE_MB = 5;
 
-    const ICE_SERVERS = [{ urls: ['stun:stun.l.google.com:19302'] }];
-
-    let ws, pc, localStream, remoteStream;
+    let ws;
     let myId = crypto.randomUUID();
     let partnerId = null;
     let roomId = null;
 
     const statusEl = document.getElementById('status');
     const sigInd = document.getElementById('sigInd');
-    const rtcInd = document.getElementById('rtcInd');
-    const localVideo = document.getElementById('localVideo');
-    const remoteVideo = document.getElementById('remoteVideo');
+    const matchInd = document.getElementById('matchInd');
+    const messagesEl = document.getElementById('messages');
+    const inputEl = document.getElementById('input');
+    const fileEl = document.getElementById('file');
+    const btnPhoto = document.getElementById('btnPhoto');
+    const btnSend = document.getElementById('btnSend');
     const btnConnect = document.getElementById('btnConnect');
     const btnNext = document.getElementById('btnNext');
     const btnEnd = document.getElementById('btnEnd');
-    const btnMute = document.getElementById('btnMute');
-    const btnCam = document.getElementById('btnCam');
-    const logEl = document.getElementById('log');
     const roomEl = document.getElementById('room');
+    const logEl = document.getElementById('log');
 
     function log(m) { const t = new Date().toLocaleTimeString(); logEl.innerHTML = `[${t}] ${m}<br>` + logEl.innerHTML; }
     function setSig(ok) { sigInd.className = 'ind ' + (ok ? 'ok' : 'bad'); }
-    function setRtc(ok) { rtcInd.className = 'ind ' + (ok ? 'ok' : 'warn'); }
+    function setMatch(ok) { matchInd.className = 'ind ' + (ok ? 'ok' : 'warn'); }
     function setStatus(t) { statusEl.textContent = t; }
     function setRoom(r) { roomEl.textContent = r || '—'; }
-    function enableInCall(e) {
-      btnNext.disabled = !e; btnEnd.disabled = !e; btnMute.disabled = !e; btnCam.disabled = !e;
+    function enableInChat(e) {
+      btnNext.disabled = !e; btnEnd.disabled = !e; btnSend.disabled = !e; btnPhoto.disabled = !e; inputEl.disabled = !e;
     }
+    function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
-    async function getMedia() {
-      return await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true },
-        video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }
-      });
-    }
-
-    async function createPC() {
-      pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
-      remoteStream = new MediaStream();
-      remoteVideo.srcObject = remoteStream;
-
-      pc.onicecandidate = ({ candidate }) => { if (candidate) send({ type: 'signal', signal: { candidate } }); };
-      pc.ontrack = (ev) => { ev.streams[0].getTracks().forEach(t => remoteStream.addTrack(t)); };
-      pc.onconnectionstatechange = () => { setRtc(pc.connectionState === 'connected'); log('RTC ' + pc.connectionState); };
-      pc.oniceconnectionstatechange = () => log('ICE ' + pc.iceConnectionState);
-
-      localStream.getTracks().forEach(tr => pc.addTrack(tr, localStream));
-    }
-
-    async function startCaller() {
-      await createPC();
-      const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
-      await pc.setLocalDescription(offer);
-      send({ type: 'signal', signal: { sdp: pc.localDescription } });
-      log('Offer enviado');
-    }
-
-    async function handleSignal(msg) {
-      const { signal } = msg;
-      if (signal.sdp) {
-        await pc.setRemoteDescription(signal.sdp);
-        log('Set remote ' + signal.sdp.type);
-        if (signal.sdp.type === 'offer') {
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          send({ type: 'signal', signal: { sdp: pc.localDescription } });
-          log('Answer enviado');
-        }
-      } else if (signal.candidate) {
-        try { await pc.addIceCandidate(signal.candidate); } catch (e) { log('ICE error ' + e.message); }
+    function addMessage(type, content, isImage = false) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + type;
+      if (isImage) {
+        const img = document.createElement('img');
+        img.src = content;
+        img.alt = 'Imagen enviada';
+        div.appendChild(img);
+      } else {
+        div.textContent = content;
       }
+      messagesEl.appendChild(div);
+      scrollBottom();
+    }
+
+    function addSystem(content) {
+      const div = document.createElement('div');
+      div.className = 'msg sys';
+      div.textContent = content;
+      messagesEl.appendChild(div);
+      scrollBottom();
     }
 
     function connectWS() {
       ws = new WebSocket(SIGNAL_URL);
       ws.onopen = () => { setSig(true); log('Signaling conectado'); send({ type: 'join' }); setStatus('Buscando pareja…'); };
-      ws.onclose = () => { setSig(false); log('Signaling cerrado'); };
+      ws.onclose = () => { setSig(false); log('Signaling cerrado'); setMatch(false); enableInChat(false); };
       ws.onerror = () => { setSig(false); log('Error de signaling'); };
-      ws.onmessage = async ({ data }) => {
+      ws.onmessage = ({ data }) => {
         const msg = JSON.parse(data);
-        if (msg.type === 'hello') log('Server listo');
-        if (msg.type === 'waiting') { setStatus('Esperando a otro usuario…'); }
+        if (msg.type === 'hello') log('Servidor listo');
+        if (msg.type === 'waiting') { setStatus('Esperando a otro usuario…'); addSystem('Estás en la cola.'); }
         if (msg.type === 'matched') {
-          partnerId = msg.partnerId; roomId = msg.roomId; setRoom(roomId); enableInCall(true);
-          setStatus('Conectando…');
-          if (msg.isCaller) await startCaller(); else await createPC();
+          partnerId = msg.partnerId; roomId = msg.roomId; setRoom(roomId);
+          setStatus('Conectado. Chatea con tu pareja.');
+          setMatch(true); enableInChat(true);
+          addSystem('Pareja conectada. ¡Saluda!');
         }
-        if (msg.type === 'signal') await handleSignal(msg);
         if (msg.type === 'partner-left') {
-          log('Tu pareja se desconectó');
+          addSystem('Tu pareja se desconectó.');
           teardown(false);
-          setStatus('Pareja desconectada. Pulsa “Next” para reintentar');
+          setStatus('Pareja desconectada. Pulsa “Next” para reintentar.');
+        }
+        if (msg.type === 'chat') {
+          addMessage('them', msg.text);
+        }
+        if (msg.type === 'image') {
+          addMessage('them', msg.dataUrl, true);
         }
       };
     }
@@ -190,51 +205,76 @@
       ws.send(JSON.stringify({ id: myId, partnerId, roomId, ...payload }));
     }
 
-    async function initMediaOnce() {
-      if (!localStream) {
-        localStream = await getMedia();
-        localVideo.srcObject = localStream;
-        log('Permisos concedidos');
-      }
-    }
-
     function teardown(notify = true) {
       if (notify) send({ type: 'leave' });
-      if (pc) { try { pc.close(); } catch {} pc = null; }
-      remoteVideo.srcObject = null;
       partnerId = null; roomId = null; setRoom(null);
-      setRtc(false); enableInCall(false);
+      setMatch(false); enableInChat(false);
     }
 
-    btnConnect.addEventListener('click', async () => {
-      await initMediaOnce();
-      connectWS();
-      btnConnect.disabled = true;
+    // Eventos UI
+    btnConnect.addEventListener('click', () => {
+      connectWS(); btnConnect.disabled = true;
     });
 
-    btnNext.addEventListener('click', async () => {
+    btnNext.addEventListener('click', () => {
       teardown(true);
       setStatus('Buscando nueva pareja…');
-      send({ type: 'join' }); // si ws sigue abierto, re-entra a la cola
+      send({ type: 'join' }); // re-entra a la cola si WS sigue abierto
+      addSystem('Buscando nueva pareja…');
     });
 
     btnEnd.addEventListener('click', () => {
       teardown(true);
-      setStatus('Llamada terminada. Pulsa “Conectar” para volver');
+      setStatus('Chat terminado. Pulsa “Conectar” para volver');
       btnConnect.disabled = false;
+      addSystem('Chat terminado.');
     });
 
-    btnMute.addEventListener('click', () => {
-      const t = localStream?.getAudioTracks()[0]; if (!t) return;
-      t.enabled = !t.enabled; btnMute.textContent = t.enabled ? 'Mute' : 'Unmute';
+    btnSend.addEventListener('click', () => {
+      const text = (inputEl.value || '').trim();
+      if (!text) return;
+      addMessage('me', text);
+      send({ type: 'chat', text });
+      inputEl.value = '';
     });
 
-    btnCam.addEventListener('click', () => {
-      const t = localStream?.getVideoTracks()[0]; if (!t) return;
-      t.enabled = !t.enabled; btnCam.textContent = t.enabled ? 'Cam Off' : 'Cam On';
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); btnSend.click(); }
     });
 
-    (async () => { try { await initMediaOnce(); setStatus('Listo — pulsa “Conectar”'); } catch {} })();
+    btnPhoto.addEventListener('click', () => fileEl.click());
+
+    fileEl.addEventListener('change', async () => {
+      const file = fileEl.files[0];
+      fileEl.value = ''; // reset input
+      if (!file) return;
+
+      // Validación básica
+      const mb = file.size / (1024 * 1024);
+      if (mb > MAX_IMAGE_MB) { addSystem('La imagen supera 5 MB. Reduce el tamaño.'); return; }
+      if (!file.type.startsWith('image/')) { addSystem('Solo se permiten imágenes.'); return; }
+
+      // Convertir a DataURL (no se guarda, se envía directo)
+      const dataUrl = await readFileAsDataURL(file);
+
+      // Mostrar en mi chat
+      addMessage('me', dataUrl, true);
+
+      // Enviar al otro usuario
+      send({ type: 'image', name: file.name, mime: file.type, size: file.size, dataUrl });
+    });
+
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Mensaje inicial
+    addSystem('Bienvenido. Este chat es aleatorio y las imágenes no se almacenan.');
   </script>
 </body>
 </html>
