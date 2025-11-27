@@ -6,88 +6,42 @@
   <title>Random Video Calls</title>
   <style>
     :root {
-      --bg: #0f1115;
-      --panel: #171a21;
-      --accent: #00d4ff;
-      --accent2: #7cff8b;
-      --text: #e7e9ee;
-      --muted: #9aa3b2;
-      --danger: #ff4d67;
-      --warn: #ffb020;
+      --bg: #0f1115; --panel: #171a21; --accent: #00d4ff; --text: #e7e9ee;
+      --muted: #9aa3b2; --danger: #ff4d67; --warn: #ffb020;
     }
     * { box-sizing: border-box }
     body {
-      margin: 0;
-      background: radial-gradient(1200px 800px at 80% -20%, #0b0d12 10%, var(--bg) 60%);
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      margin: 0; background: radial-gradient(1200px 800px at 80% -20%, #0b0d12 10%, var(--bg) 60%);
+      color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     }
     header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px; border-bottom: 1px solid #1f232b; background: #0c0e13ac; backdrop-filter: saturate(120%) blur(6px);
+      display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;
+      border-bottom: 1px solid #1f232b; background: #0c0e13ac; backdrop-filter: saturate(120%) blur(6px);
       position: sticky; top: 0; z-index: 10;
     }
     header h1 { font-size: 18px; margin: 0; letter-spacing: 0.3px }
     header .brand-dot { color: var(--accent) }
-    header .status {
-      display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted);
-    }
-    header .pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 10px; border-radius: 999px; background: #111419; border: 1px solid #232733; color: var(--muted);
-    }
-    #app {
-      max-width: 1100px; margin: 0 auto; padding: 24px;
-      display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px;
-    }
+    header .status { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted) }
+    header .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: #111419; border: 1px solid #232733; color: var(--muted) }
+    #app { max-width: 1100px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px }
     @media (max-width: 980px) { #app { grid-template-columns: 1fr } }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid #232733;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-    }
-    .panel header {
-      background: transparent; border: none; padding: 14px 16px; position: static;
-    }
-    .videos {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px;
-    }
+    .panel { background: var(--panel); border: 1px solid #232733; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.25) }
+    .panel header { background: transparent; border: none; padding: 14px 16px; position: static }
+    .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px }
     @media (max-width: 700px) { .videos { grid-template-columns: 1fr } }
-    .video-wrap {
-      position: relative; border-radius: 10px; overflow: hidden; background: #0b0d12;
-      border: 1px solid #1f232b;
-      aspect-ratio: 16/10;
-    }
-    video {
-      width: 100%; height: 100%; object-fit: cover; background: #000;
-    }
-    .label {
-      position: absolute; bottom: 8px; left: 8px;
-      background: #0b0d12cc; color: var(--muted); font-size: 12px;
-      padding: 6px 8px; border-radius: 6px; border: 1px solid #232733;
-      backdrop-filter: blur(4px);
-    }
-    .controls {
-      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; border-top: 1px solid #232733; background: #12151b;
-    }
-    button, .btn {
-      appearance: none; border: 1px solid #2a2f3b; color: var(--text);
-      background: #12151b; padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 14px;
-      transition: all .18s ease; cursor: pointer;
-    }
+    .video-wrap { position: relative; border-radius: 10px; overflow: hidden; background: #0b0d12; border: 1px solid #1f232b; aspect-ratio: 16/10 }
+    video { width: 100%; height: 100%; object-fit: cover; background: #000 }
+    .label { position: absolute; bottom: 8px; left: 8px; background: #0b0d12cc; color: var(--muted); font-size: 12px; padding: 6px 8px; border-radius: 6px; border: 1px solid #232733; backdrop-filter: blur(4px) }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; border-top: 1px solid #232733; background: #12151b }
+    button { appearance: none; border: 1px solid #2a2f3b; color: var(--text); background: #12151b; padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 14px; transition: all .18s ease; cursor: pointer }
     button:hover { border-color: #3a4152; transform: translateY(-1px) }
     .primary { background: linear-gradient(180deg,#00d4ff,#00a0ff); border: none; color: #07121a }
     .primary:hover { filter: brightness(1.05) }
     .danger { background: linear-gradient(180deg,#ff7a8d,#ff4d67); border: none; color: #16060a }
-    .warn { background: linear-gradient(180deg,#ffd98b,#ffb020); border: none; color: #2a1e0a }
     .ghost { background: #151922; border-color: #2a2f3b }
-    .muted { color: var(--muted) }
     .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px }
     .hint { font-size: 12px; color: var(--muted) }
-    .log { padding: 12px 16px; font-size: 13px; color: var(--muted); height: 120px; overflow: auto; border-top: 1px solid #232733 }
+    .log { padding: 12px 16px; font-size: 13px; color: var(--muted); height: 140px; overflow: auto; border-top: 1px solid #232733 }
     .badge { padding: 6px 10px; border: 1px dashed #2a2f3b; border-radius: 999px; font-size: 12px; color: var(--muted) }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
     @media (max-width: 700px) { .grid { grid-template-columns: 1fr } }
@@ -134,16 +88,13 @@
       <header>
         <div class="row">
           <strong>Configuración</strong>
-          <span class="hint">Usa HTTPS/localhost. STUN público de Google.</span>
+          <span class="hint">Usa HTTPS/localhost. Incluye TURN para NAT estrictos.</span>
         </div>
       </header>
       <div style="padding: 14px">
         <div class="grid">
-          <div class="badge">Calidad por defecto: 720p</div>
-          <div class="badge">Firebase: Realtime Database</div>
-        </div>
-        <div style="margin-top: 12px" class="hint">
-          Si un peer no conecta, puede ser por NAT restrictivo (necesitarás TURN).
+          <div class="badge">Calidad: 720p</div>
+          <div class="badge">Signaling: Firebase RTDB</div>
         </div>
       </div>
     </section>
@@ -154,16 +105,18 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // ======= CONFIGURA TU FIREBASE =======
-const firebaseConfig = {
-  apiKey: "AIzaSyBWqJI7OKZcEjN2CeTZxPi8pWzo8rBMIkI",
-  authDomain: "nearmemarketplace-ce82b.firebaseapp.com",
-  projectId: "nearmemarketplace-ce82b",
-  storageBucket: "nearmemarketplace-ce82b.firebasestorage.app",
-  messagingSenderId: "711845990024",
-  appId: "1:711845990024:web:7948ad5e5606765514d93d",
-  measurementId: "G-X75JHEDQJ0"
-};
+    // ======= TU CONFIG =======
+    const firebaseConfig = {
+      apiKey: "AIzaSyBWqJI7OKZcEjN2CeTZxPi8pWzo8rBMIkI",
+      authDomain: "nearmemarketplace-ce82b.firebaseapp.com",
+      projectId: "nearmemarketplace-ce82b",
+      storageBucket: "nearmemarketplace-ce82b.firebasestorage.app",
+      messagingSenderId: "711845990024",
+      appId: "1:711845990024:web:7948ad5e5606765514d93d",
+      measurementId: "G-X75JHEDQJ0",
+      // Necesario para Realtime Database:
+      databaseURL: "https://nearmemarketplace-ce82b-default-rtdb.firebaseio.com"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -196,32 +149,38 @@ const firebaseConfig = {
     let currentRoomId = null;
     let role = null; // 'caller' | 'callee'
     let listeners = [];
+    let inviteListener = null;
 
     // STUN (añade TURN propio para producción)
     const iceServers = [{ urls: ["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"] }];
 
-    // Constraints de media
+    // Media constraints
     const mediaConstraints = { audio: true, video: { width: { ideal: 1280 }, height: { ideal: 720 } } };
 
-    // ======= SIGNALING STRUCTURE (Realtime DB) =======
-    // /queue: usuarios esperando {uid, ts}
-    // /rooms/{roomId}/: {offer, answer, candidates/{caller|callee}}
+    // Refs
     const queueRef = db.ref('/queue');
     const roomsRef = db.ref('/rooms');
+    const invitesRef = db.ref('/invites');
 
     function cleanupListeners() {
       listeners.forEach(unsub => { try { unsub(); } catch(e){} });
       listeners = [];
+      if (inviteListener) { invitesRef.child(userId).off('value', inviteListener); inviteListener = null; }
     }
 
     async function initMedia() {
       if (localStream) return localStream;
-      localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
-      localVideo.srcObject = localStream;
-      setConn('cam/mic ok');
-      muteBtn.disabled = false;
-      cameraBtn.disabled = false;
-      return localStream;
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+        localVideo.srcObject = localStream;
+        setConn('cam/mic ok');
+        muteBtn.disabled = false;
+        cameraBtn.disabled = false;
+        return localStream;
+      } catch(e) {
+        log('Permisos de cámara/mic rechazados o fallo: ' + e.message);
+        throw e;
+      }
     }
 
     function createPeerConnection() {
@@ -229,17 +188,14 @@ const firebaseConfig = {
       remoteStream = new MediaStream();
       remoteVideo.srcObject = remoteStream;
 
-      // Track local -> pc
       localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
-      // Track pc -> remote
       pc.ontrack = (ev) => {
         ev.streams[0].getTracks().forEach(t => remoteStream.addTrack(t));
       };
 
-      // ICE local -> signaling
       pc.onicecandidate = (ev) => {
-        if (ev.candidate) {
+        if (ev.candidate && currentRoomId && role) {
           const path = `/rooms/${currentRoomId}/candidates/${role}`;
           db.ref(path).push(ev.candidate.toJSON());
         }
@@ -249,7 +205,7 @@ const firebaseConfig = {
         setConn(pc.connectionState);
         if (pc.connectionState === 'connected') {
           setMatch('conectado');
-        } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        } else if (['disconnected','failed','closed'].includes(pc.connectionState)) {
           setMatch(pc.connectionState);
         }
       };
@@ -257,70 +213,67 @@ const firebaseConfig = {
       return pc;
     }
 
-    // Escucha ICE remotos
+    // Escuchar ICE remotos
     function listenRemoteCandidates(oppositeRole) {
       const ref = db.ref(`/rooms/${currentRoomId}/candidates/${oppositeRole}`);
-      const unsub = ref.on('child_added', async snap => {
+      const handler = async snap => {
         const cand = snap.val();
         try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) { console.warn('addIceCandidate error', e); }
-      });
-      listeners.push(() => ref.off('child_added', unsub));
+      };
+      ref.on('child_added', handler);
+      listeners.push(() => ref.off('child_added', handler));
     }
 
     // ======= MATCHING =======
     async function findMatch() {
-      // Intentar emparejar con alguien en la cola (FIFO simple)
-      const snap = await queueRef.limitToFirst(1).once('value');
+      // Primero intentamos tomar a alguien de la cola
+      const snap = await queueRef.orderByChild('ts').limitToFirst(1).once('value');
       const val = snap.val();
       const entries = val ? Object.entries(val) : [];
 
       if (entries.length === 0) {
-        // No hay nadie: entrar en cola
+        // Entrar a cola y esperar invite
         const myNode = queueRef.push({ uid: userId, ts: Date.now() });
-        log('No hay usuarios. Entraste a la cola.');
         setMatch('esperando');
-        // Esperar a que alguien te empareje (serás callee)
-        const unsub = myNode.onDisconnect().remove();
-        listeners.push(() => myNode.onDisconnect().cancel());
-        // Escuchar invitación (room creada por otro)
-        const inviteRef = db.ref(`/invites/${userId}`);
-        const inviteUnsub = inviteRef.on('value', async (s) => {
+        log('No hay usuarios disponibles. Entraste a la cola.');
+
+        // Limpieza si cierro
+        myNode.onDisconnect().remove();
+
+        // Escuchar invitaciones dirigidas a mí
+        inviteListener = invitesRef.child(userId).on('value', async (s) => {
           const invite = s.val();
           if (invite && invite.roomId) {
-            // Aceptar y limpiar
-            await myNode.remove();
-            await inviteRef.remove();
+            await myNode.remove().catch(()=>{});
+            await invitesRef.child(userId).remove().catch(()=>{});
             currentRoomId = invite.roomId;
             role = 'callee';
-            log(`Invitado a room ${currentRoomId} (callee).`);
             setRoom(currentRoomId);
+            log(`Recibiste invite a room ${currentRoomId}.`);
             await startCalleeFlow(currentRoomId);
           }
         });
-        listeners.push(() => inviteRef.off('value', inviteUnsub));
         return;
       }
 
-      // Hay alguien: crear room y sacarlo de cola
+      // Emparejar con el primero en cola
       const [key, data] = entries[0];
       if (!data || data.uid === userId) {
-        // Seguridad: si el único eres tú, entrar a cola
+        // Si el único soy yo, volver a esperar
         await queueRef.push({ uid: userId, ts: Date.now() });
         setMatch('esperando');
         log('Esperando otro usuario...');
         return;
       }
-      // Tomar al otro usuario y removerlo
-      await queueRef.child(key).remove();
+      await queueRef.child(key).remove().catch(()=>{});
 
-      // Crear room
+      // Crear room e invitar
       currentRoomId = `r_${Math.random().toString(36).slice(2,10)}`;
       role = 'caller';
       setRoom(currentRoomId);
-
-      // Avisar al otro
-      await db.ref(`/invites/${data.uid}`).set({ roomId: currentRoomId, from: userId, ts: Date.now() });
+      await invitesRef.child(data.uid).set({ roomId: currentRoomId, from: userId, ts: Date.now() });
       log(`Creaste room ${currentRoomId} y enviaste invite a ${data.uid}.`);
+
       await startCallerFlow(currentRoomId);
     }
 
@@ -328,35 +281,29 @@ const firebaseConfig = {
     async function startCallerFlow(roomId) {
       await initMedia();
       createPeerConnection();
-
       listenRemoteCandidates('callee');
 
-      // Crear oferta
       const offer = await pc.createOffer({ offerToReceiveAudio: 1, offerToReceiveVideo: 1 });
       await pc.setLocalDescription(offer);
 
-      // Guardar oferta
       await roomsRef.child(roomId).child('offer').set({
-        sdp: offer.sdp,
-        type: offer.type,
-        ts: Date.now(),
-        by: userId
+        sdp: offer.sdp, type: offer.type, ts: Date.now(), by: userId
       });
 
       setConn('oferta enviada');
       log('Oferta enviada. Esperando respuesta...');
 
-      // Escuchar respuesta
       const answerRef = roomsRef.child(roomId).child('answer');
-      const unsub = answerRef.on('value', async (snap) => {
+      const handler = async snap => {
         const ans = snap.val();
-        if (ans && ans.sdp) {
+        if (ans && ans.sdp && pc && !pc.remoteDescription) {
           await pc.setRemoteDescription(new RTCSessionDescription(ans));
           setConn('conectando...');
           log('Respuesta recibida. Estableciendo conexión...');
         }
-      });
-      listeners.push(() => answerRef.off('value', unsub));
+      };
+      answerRef.on('value', handler);
+      listeners.push(() => answerRef.off('value', handler));
 
       enableControlsInCall();
     }
@@ -365,10 +312,8 @@ const firebaseConfig = {
     async function startCalleeFlow(roomId) {
       await initMedia();
       createPeerConnection();
-
       listenRemoteCandidates('caller');
 
-      // Leer oferta
       const offerSnap = await roomsRef.child(roomId).child('offer').once('value');
       const offer = offerSnap.val();
       if (!offer || !offer.sdp) {
@@ -377,16 +322,11 @@ const firebaseConfig = {
       }
       await pc.setRemoteDescription(new RTCSessionDescription(offer));
 
-      // Crear respuesta
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      // Guardar respuesta
       await roomsRef.child(roomId).child('answer').set({
-        sdp: answer.sdp,
-        type: answer.type,
-        ts: Date.now(),
-        by: userId
+        sdp: answer.sdp, type: answer.type, ts: Date.now(), by: userId
       });
 
       setConn('respuesta enviada');
@@ -452,27 +392,23 @@ const firebaseConfig = {
       } catch(e) {}
       pc = null;
 
-      // Limpiar streams
+      // Reinicia solo el remoto; deja local para rematch rápido
       if (remoteVideo.srcObject) { remoteVideo.srcObject.getTracks().forEach(t => t.stop()); }
       remoteVideo.srcObject = null;
 
-      // No apagamos localStream para permitir re-match rápido,
-      // pero si quieres liberar cámara: descomenta abajo.
-      // if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; localVideo.srcObject = null; }
-
-      // Limpiar signaling
+      // Limpia signaling
       if (currentRoomId && clearRoom) {
-        try {
-          await roomsRef.child(currentRoomId).remove();
-        } catch(e) {}
+        try { await roomsRef.child(currentRoomId).remove(); } catch(e) {}
       }
+      currentRoomId = null;
+      role = null;
       setRoom(null);
       setMatch('—');
       setConn('offline');
       resetControls();
     }
 
-    // ======= WIRE UI =======
+    // Wire UI
     startBtn.addEventListener('click', start);
     nextBtn.addEventListener('click', next);
     endBtn.addEventListener('click', () => endCall(true));
@@ -482,7 +418,7 @@ const firebaseConfig = {
     // Estado inicial
     setConn('offline');
     setMatch('—');
-    log('Listo. Pulsa Start para encontrar un match.');
+    log('Listo. Pulsa Start en dos pestañas para probar el match.');
   </script>
 </body>
 </html>
