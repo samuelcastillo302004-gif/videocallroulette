@@ -6,72 +6,169 @@
   <title>Random Video Calls</title>
   <style>
     :root {
-      --bg: #0f1115; --panel: #171a21; --accent: #00d4ff; --text: #e7e9ee;
-      --muted: #9aa3b2; --danger: #ff4d67; --warn: #ffb020;
+      --bg: #0a0b10;
+      --panel: #0f1218;
+      --card: #131722;
+      --border: #222836;
+      --text: #e8ecf3;
+      --muted: #9aa5b1;
+      --accent: #6df1ff;
+      --accent2: #7cff8b;
+      --danger: #ff466b;
+      --warn: #ffb020;
+      --shadow: 0 18px 40px rgba(0,0,0,0.35);
     }
     * { box-sizing: border-box }
+    html, body { height: 100% }
     body {
-      margin: 0; background: radial-gradient(1200px 800px at 80% -20%, #0b0d12 10%, var(--bg) 60%);
-      color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      margin: 0; color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 80% -20%, #0b0e14 10%, var(--bg) 60%),
+        linear-gradient(160deg, #0a0b10 0%, #0f1218 60%, #0a0b10 100%);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     }
-    header {
-      display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;
-      border-bottom: 1px solid #1f232b; background: #0c0e13ac; backdrop-filter: saturate(120%) blur(6px);
-      position: sticky; top: 0; z-index: 10;
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; backdrop-filter: saturate(120%) blur(8px);
+      background: rgba(10,12,16,0.6); border-bottom: 1px solid var(--border);
     }
-    header h1 { font-size: 18px; margin: 0; letter-spacing: 0.3px }
-    header .brand-dot { color: var(--accent) }
-    header .status { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted) }
-    header .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: #111419; border: 1px solid #232733; color: var(--muted) }
-    #app { max-width: 1100px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px }
-    @media (max-width: 980px) { #app { grid-template-columns: 1fr } }
-    .panel { background: var(--panel); border: 1px solid #232733; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.25) }
-    .panel header { background: transparent; border: none; padding: 14px 16px; position: static }
-    .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px }
-    @media (max-width: 700px) { .videos { grid-template-columns: 1fr } }
-    .video-wrap { position: relative; border-radius: 10px; overflow: hidden; background: #0b0d12; border: 1px solid #1f232b; aspect-ratio: 16/10 }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: radial-gradient(180px 120px at 30% 20%, #1a2b3f, #0f1827 60%);
+      border: 1px solid #243044; box-shadow: inset 0 0 20px rgba(0,212,255,0.15);
+      position: relative;
+    }
+    .logo::after {
+      content: ""; position: absolute; right: 8px; top: 8px; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 12px var(--accent);
+    }
+    .brand h1 { margin: 0; font-size: 16px; letter-spacing: .4px }
+    .status { display: flex; gap: 8px; flex-wrap: wrap }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border-radius: 999px; background: #0e1220; border: 1px solid var(--border);
+      color: var(--muted); font-size: 12px;
+    }
+
+    .container {
+      max-width: 1200px; margin: 22px auto; padding: 0 22px;
+      display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px;
+    }
+    @media (max-width: 980px) { .container { grid-template-columns: 1fr } }
+
+    .panel {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .panel-header {
+      padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); background: linear-gradient(180deg,#101522,#0f1218);
+    }
+    .badge {
+      padding: 6px 10px; border: 1px dashed var(--border); border-radius: 999px; font-size: 12px; color: var(--muted)
+    }
+
+    .videos {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px;
+    }
+    @media (max-width: 780px) { .videos { grid-template-columns: 1fr } }
+    .video-card {
+      position: relative; border-radius: 12px; overflow: hidden;
+      background: var(--card); border: 1px solid var(--border);
+      aspect-ratio: 16/10;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.35);
+    }
     video { width: 100%; height: 100%; object-fit: cover; background: #000 }
-    .label { position: absolute; bottom: 8px; left: 8px; background: #0b0d12cc; color: var(--muted); font-size: 12px; padding: 6px 8px; border-radius: 6px; border: 1px solid #232733; backdrop-filter: blur(4px) }
-    .controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; border-top: 1px solid #232733; background: #12151b }
-    button { appearance: none; border: 1px solid #2a2f3b; color: var(--text); background: #12151b; padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 14px; transition: all .18s ease; cursor: pointer }
-    button:hover { border-color: #3a4152; transform: translateY(-1px) }
-    .primary { background: linear-gradient(180deg,#00d4ff,#00a0ff); border: none; color: #07121a }
-    .primary:hover { filter: brightness(1.05) }
-    .danger { background: linear-gradient(180deg,#ff7a8d,#ff4d67); border: none; color: #16060a }
-    .ghost { background: #151922; border-color: #2a2f3b }
-    .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px }
+    .label {
+      position: absolute; left: 10px; bottom: 10px;
+      background: rgba(16,20,32,0.7); padding: 6px 10px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 12px; color: var(--muted); backdrop-filter: blur(4px);
+    }
+    .indicator {
+      position: absolute; right: 10px; top: 10px; display: flex; gap: 6px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50% }
+    .dot.green { background: #66ff9a; box-shadow: 0 0 10px #66ff9a }
+    .dot.yellow { background: #ffd56b; box-shadow: 0 0 10px #ffd56b }
+    .dot.red { background: #ff7a8d; box-shadow: 0 0 10px #ff7a8d }
+
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px;
+      border-top: 1px solid var(--border); background: #0f131d;
+    }
+    button {
+      appearance: none; border: 1px solid #2a3242; color: var(--text);
+      background: #121826; padding: 10px 14px; border-radius: 11px; font-weight: 600; font-size: 14px;
+      transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+      cursor: pointer;
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,0,0,0.25) }
+    .primary { background: linear-gradient(180deg,#6df1ff,#00a8ff); border: none; color: #06121a }
+    .danger { background: linear-gradient(180deg,#ff8aa0,#ff466b); border: none; color: #16060a }
+    .ghost { background: #131a28; border-color: #2a3242 }
+    .warn { background: linear-gradient(180deg,#ffd98b,#ffb020); border: none; color: #2a1e0a }
+
+    .sidebar {
+      padding: 0;
+    }
+    .card {
+      margin: 16px; padding: 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
+    }
+    .card h3 { margin: 0 0 8px 0; font-size: 14px; color: var(--muted) }
+    .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+    @media (max-width: 780px) { .kv { grid-template-columns: 1fr } }
+
+    .log { padding: 12px 16px; font-size: 12px; color: var(--muted); height: 160px; overflow: auto; border-top: 1px solid var(--border); background: #0e121b }
     .hint { font-size: 12px; color: var(--muted) }
-    .log { padding: 12px 16px; font-size: 13px; color: var(--muted); height: 140px; overflow: auto; border-top: 1px solid #232733 }
-    .badge { padding: 6px 10px; border: 1px dashed #2a2f3b; border-radius: 999px; font-size: 12px; color: var(--muted) }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr } }
+
+    .pulse {
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(109,241,255,0.35) }
+      70% { box-shadow: 0 0 0 16px rgba(109,241,255,0) }
+      100% { box-shadow: 0 0 0 0 rgba(109,241,255,0) }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Random Video <span class="brand-dot">●</span> Calls</h1>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo pulse"></div>
+      <h1>Random Video Calls</h1>
+    </div>
     <div class="status">
       <span class="pill" id="connStatus">Estado: offline</span>
+      <span class="pill" id="iceStatus">ICE: —</span>
       <span class="pill" id="matchStatus">Match: —</span>
+      <span class="pill" id="roomBadge">Room: —</span>
     </div>
-  </header>
+  </div>
 
-  <div id="app">
-    <section class="panel" id="callPanel">
-      <header>
-        <div class="row">
-          <strong>Videollamada</strong>
-          <span class="badge" id="roomBadge">room: —</span>
-        </div>
-      </header>
+  <div class="container">
+    <section class="panel">
+      <div class="panel-header">
+        <strong>Videollamada</strong>
+        <span class="badge">STUN + reintento ICE</span>
+      </div>
       <div class="videos">
-        <div class="video-wrap">
+        <div class="video-card">
           <video id="remoteVideo" autoplay playsinline></video>
           <div class="label">Remote</div>
+          <div class="indicator">
+            <div class="dot" id="remoteDot"></div>
+          </div>
         </div>
-        <div class="video-wrap">
+        <div class="video-card">
           <video id="localVideo" autoplay playsinline muted></video>
           <div class="label">Tú</div>
+          <div class="indicator">
+            <div class="dot green" id="localDot"></div>
+          </div>
         </div>
       </div>
       <div class="controls">
@@ -79,33 +176,46 @@
         <button class="ghost" id="nextBtn" disabled>Next</button>
         <button class="ghost" id="muteBtn" disabled>Mute</button>
         <button class="ghost" id="cameraBtn" disabled>Camera off</button>
+        <button class="warn" id="restartIceBtn" disabled>Reintentar ICE</button>
         <button class="danger" id="endBtn" disabled>End</button>
       </div>
       <div class="log" id="log"></div>
     </section>
 
-    <section class="panel">
-      <header>
-        <div class="row">
-          <strong>Configuración</strong>
-          <span class="hint">Usa HTTPS/localhost. Incluye TURN para NAT estrictos.</span>
-        </div>
-      </header>
-      <div style="padding: 14px">
-        <div class="grid">
-          <div class="badge">Calidad: 720p</div>
-          <div class="badge">Signaling: Firebase RTDB</div>
-        </div>
+    <aside class="panel sidebar">
+      <div class="panel-header">
+        <strong>Estado y consejos</strong>
+        <span class="badge">Diagnóstico en vivo</span>
       </div>
-    </section>
+      <div class="card">
+        <h3>Conexión</h3>
+        <div class="kv">
+          <div class="badge">Video: 720p</div>
+          <div class="badge">Audio: On</div>
+          <div class="badge">Signaling: Firebase RTDB</div>
+          <div class="badge">Trickle ICE: Sí</div>
+        </div>
+        <p class="hint" style="margin-top:8px">
+          Si ves “failed”, tu red puede necesitar un servidor TURN. El botón “Reintentar ICE” fuerza nueva negociación.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Tips rápidos</h3>
+        <ul class="hint" style="margin:0 0 8px 16px">
+          <li>Prueba primero en dos pestañas del mismo navegador.</li>
+          <li>Luego en dos dispositivos dentro de la misma red Wi‑Fi.</li>
+          <li>Para 4G/NAT estrictos, añade TURN (coturn) y credenciales en iceServers.</li>
+        </ul>
+      </div>
+    </aside>
   </div>
 
-  <!-- Firebase v8 compat (simple para navegador sin bundler) -->
+  <!-- Firebase v8 compat -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // ======= TU CONFIG =======
+    // ======= Firebase (tu config) =======
     const firebaseConfig = {
       apiKey: "AIzaSyBWqJI7OKZcEjN2CeTZxPi8pWzo8rBMIkI",
       authDomain: "nearmemarketplace-ce82b.firebaseapp.com",
@@ -114,22 +224,27 @@
       messagingSenderId: "711845990024",
       appId: "1:711845990024:web:7948ad5e5606765514d93d",
       measurementId: "G-X75JHEDQJ0",
-      // Necesario para Realtime Database:
       databaseURL: "https://nearmemarketplace-ce82b-default-rtdb.firebaseio.com"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ======= UI =======
+    // ======= UI refs =======
     const logEl = document.getElementById('log');
     const localVideo = document.getElementById('localVideo');
     const remoteVideo = document.getElementById('remoteVideo');
+    const localDot = document.getElementById('localDot');
+    const remoteDot = document.getElementById('remoteDot');
+
     const startBtn = document.getElementById('startBtn');
     const nextBtn = document.getElementById('nextBtn');
     const muteBtn = document.getElementById('muteBtn');
     const cameraBtn = document.getElementById('cameraBtn');
+    const restartIceBtn = document.getElementById('restartIceBtn');
     const endBtn = document.getElementById('endBtn');
+
     const connStatus = document.getElementById('connStatus');
+    const iceStatus = document.getElementById('iceStatus');
     const matchStatus = document.getElementById('matchStatus');
     const roomBadge = document.getElementById('roomBadge');
 
@@ -138,10 +253,11 @@
       logEl.innerHTML = `[${ts}] ${msg}<br>` + logEl.innerHTML;
     };
     const setConn = (txt) => connStatus.textContent = `Estado: ${txt}`;
+    const setIce = (txt) => iceStatus.textContent = `ICE: ${txt}`;
     const setMatch = (txt) => matchStatus.textContent = `Match: ${txt}`;
-    const setRoom = (id) => roomBadge.textContent = `room: ${id || '—'}`;
+    const setRoom = (id) => roomBadge.textContent = `Room: ${id || '—'}`;
 
-    // ======= STATE =======
+    // ======= Estado =======
     let userId = `u_${Math.random().toString(36).slice(2,10)}`;
     let pc = null;
     let localStream = null;
@@ -150,14 +266,20 @@
     let role = null; // 'caller' | 'callee'
     let listeners = [];
     let inviteListener = null;
+    let iceRestartAttempts = 0;
+    const ICE_RESTART_MAX = 2;
 
-    // STUN (añade TURN propio para producción)
-    const iceServers = [{ urls: ["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"] }];
+    // ======= ICE servers =======
+    // Añade TURN propio para garantizar conexión en redes móviles/NAT estrictos:
+    // { urls: "turn:TU_DOMINIO:3478", username: "USER", credential: "PASS" }
+    const iceServers = [
+      { urls: ["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"] }
+    ];
 
-    // Media constraints
+    // ======= Media =======
     const mediaConstraints = { audio: true, video: { width: { ideal: 1280 }, height: { ideal: 720 } } };
 
-    // Refs
+    // ======= DB refs =======
     const queueRef = db.ref('/queue');
     const roomsRef = db.ref('/rooms');
     const invitesRef = db.ref('/invites');
@@ -174,11 +296,13 @@
         localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
         localVideo.srcObject = localStream;
         setConn('cam/mic ok');
-        muteBtn.disabled = false;
-        cameraBtn.disabled = false;
+        localDot.className = 'dot green';
+        muteBtn.disabled = false; cameraBtn.disabled = false;
         return localStream;
       } catch(e) {
         log('Permisos de cámara/mic rechazados o fallo: ' + e.message);
+        setConn('media error');
+        localDot.className = 'dot red';
         throw e;
       }
     }
@@ -187,26 +311,52 @@
       pc = new RTCPeerConnection({ iceServers });
       remoteStream = new MediaStream();
       remoteVideo.srcObject = remoteStream;
+      setIce('gathering');
+      remoteDot.className = 'dot yellow';
 
+      // Local tracks
       localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
+      // Remote tracks
       pc.ontrack = (ev) => {
-        ev.streams[0].getTracks().forEach(t => remoteStream.addTrack(t));
+        ev.streams[0]?.getTracks().forEach(t => remoteStream.addTrack(t));
+        remoteDot.className = 'dot green';
       };
 
+      // ICE candidates (local -> DB)
       pc.onicecandidate = (ev) => {
         if (ev.candidate && currentRoomId && role) {
           const path = `/rooms/${currentRoomId}/candidates/${role}`;
           db.ref(path).push(ev.candidate.toJSON());
         }
+        if (!ev.candidate) {
+          setIce('complete');
+          log('ICE gathering completado.');
+        }
       };
 
+      // ICE connection state
+      pc.oniceconnectionstatechange = () => {
+        const st = pc.iceConnectionState;
+        setIce(st);
+        if (st === 'failed') {
+          log('ICE failed. Intentando reintento automático...');
+          maybeRestartIce();
+        } else if (st === 'disconnected') {
+          log('ICE disconnected. Esperando recuperación o Next.');
+        } else if (st === 'connected' || st === 'completed') {
+          iceRestartAttempts = 0;
+          setMatch('conectado');
+        }
+      };
+
+      // Peer connection state
       pc.onconnectionstatechange = () => {
         setConn(pc.connectionState);
         if (pc.connectionState === 'connected') {
           setMatch('conectado');
         } else if (['disconnected','failed','closed'].includes(pc.connectionState)) {
-          setMatch(pc.connectionState);
+          // Mantén controles, deja opción de reintentar/Next
         }
       };
 
@@ -218,29 +368,27 @@
       const ref = db.ref(`/rooms/${currentRoomId}/candidates/${oppositeRole}`);
       const handler = async snap => {
         const cand = snap.val();
-        try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) { console.warn('addIceCandidate error', e); }
+        try { await pc.addIceCandidate(new RTCIceCandidate(cand)); } catch(e) {
+          console.warn('addIceCandidate error', e);
+          log('Error addIceCandidate: ' + e.message);
+        }
       };
       ref.on('child_added', handler);
       listeners.push(() => ref.off('child_added', handler));
     }
 
-    // ======= MATCHING =======
+    // ======= Matchmaking =======
     async function findMatch() {
-      // Primero intentamos tomar a alguien de la cola
       const snap = await queueRef.orderByChild('ts').limitToFirst(1).once('value');
       const val = snap.val();
       const entries = val ? Object.entries(val) : [];
 
       if (entries.length === 0) {
-        // Entrar a cola y esperar invite
         const myNode = queueRef.push({ uid: userId, ts: Date.now() });
         setMatch('esperando');
-        log('No hay usuarios disponibles. Entraste a la cola.');
-
-        // Limpieza si cierro
+        log('No hay usuarios. Entraste a la cola.');
         myNode.onDisconnect().remove();
 
-        // Escuchar invitaciones dirigidas a mí
         inviteListener = invitesRef.child(userId).on('value', async (s) => {
           const invite = s.val();
           if (invite && invite.roomId) {
@@ -249,17 +397,15 @@
             currentRoomId = invite.roomId;
             role = 'callee';
             setRoom(currentRoomId);
-            log(`Recibiste invite a room ${currentRoomId}.`);
+            log(`Invite recibido: room ${currentRoomId}.`);
             await startCalleeFlow(currentRoomId);
           }
         });
         return;
       }
 
-      // Emparejar con el primero en cola
       const [key, data] = entries[0];
       if (!data || data.uid === userId) {
-        // Si el único soy yo, volver a esperar
         await queueRef.push({ uid: userId, ts: Date.now() });
         setMatch('esperando');
         log('Esperando otro usuario...');
@@ -267,17 +413,16 @@
       }
       await queueRef.child(key).remove().catch(()=>{});
 
-      // Crear room e invitar
       currentRoomId = `r_${Math.random().toString(36).slice(2,10)}`;
       role = 'caller';
       setRoom(currentRoomId);
       await invitesRef.child(data.uid).set({ roomId: currentRoomId, from: userId, ts: Date.now() });
-      log(`Creaste room ${currentRoomId} y enviaste invite a ${data.uid}.`);
+      log(`Room ${currentRoomId} creada. Invite enviado a ${data.uid}.`);
 
       await startCallerFlow(currentRoomId);
     }
 
-    // ======= CALLER FLOW =======
+    // ======= Caller flow =======
     async function startCallerFlow(roomId) {
       await initMedia();
       createPeerConnection();
@@ -285,11 +430,9 @@
 
       const offer = await pc.createOffer({ offerToReceiveAudio: 1, offerToReceiveVideo: 1 });
       await pc.setLocalDescription(offer);
-
       await roomsRef.child(roomId).child('offer').set({
         sdp: offer.sdp, type: offer.type, ts: Date.now(), by: userId
       });
-
       setConn('oferta enviada');
       log('Oferta enviada. Esperando respuesta...');
 
@@ -308,7 +451,7 @@
       enableControlsInCall();
     }
 
-    // ======= CALLEE FLOW =======
+    // ======= Callee flow =======
     async function startCalleeFlow(roomId) {
       await initMedia();
       createPeerConnection();
@@ -324,23 +467,45 @@
 
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
-
       await roomsRef.child(roomId).child('answer').set({
         sdp: answer.sdp, type: answer.type, ts: Date.now(), by: userId
       });
-
       setConn('respuesta enviada');
       log('Respuesta enviada. Conectando...');
+
       enableControlsInCall();
     }
 
-    // ======= CONTROLES =======
+    // ======= ICE restart =======
+    async function maybeRestartIce(manual = false) {
+      if (!pc || !currentRoomId) return;
+      if (!manual && iceRestartAttempts >= ICE_RESTART_MAX) {
+        log('Reintentos ICE agotados. Es probable que necesites un servidor TURN.');
+        remoteDot.className = 'dot red';
+        return;
+      }
+      iceRestartAttempts += manual ? 0 : 1;
+      try {
+        log('Iniciando ICE restart...');
+        const offer = await pc.createOffer({ iceRestart: true });
+        await pc.setLocalDescription(offer);
+        await roomsRef.child(currentRoomId).child('offer').set({
+          sdp: offer.sdp, type: offer.type, ts: Date.now(), by: userId, restart: true
+        });
+        setIce('restarting');
+      } catch (e) {
+        log('Fallo al reiniciar ICE: ' + e.message);
+      }
+    }
+
+    // ======= Controles =======
     function enableControlsInCall() {
       startBtn.disabled = true;
       nextBtn.disabled = false;
       endBtn.disabled = false;
       muteBtn.disabled = false;
       cameraBtn.disabled = false;
+      restartIceBtn.disabled = false;
     }
     function resetControls() {
       startBtn.disabled = false;
@@ -348,6 +513,7 @@
       endBtn.disabled = true;
       muteBtn.disabled = true;
       cameraBtn.disabled = true;
+      restartIceBtn.disabled = true;
     }
 
     async function start() {
@@ -361,7 +527,7 @@
     }
 
     async function next() {
-      log('Siguiente: terminando y buscando nuevo match.');
+      log('Siguiente: cerrando y buscando nuevo match.');
       await endCall(false);
       await findMatch();
     }
@@ -380,11 +546,13 @@
 
     async function endCall(clearRoom = true) {
       cleanupListeners();
+      iceRestartAttempts = 0;
 
       try {
         if (pc) {
           pc.ontrack = null;
           pc.onicecandidate = null;
+          pc.oniceconnectionstatechange = null;
           pc.onconnectionstatechange = null;
           pc.getSenders().forEach(s => { try { pc.removeTrack(s); } catch(e){} });
           pc.close();
@@ -392,11 +560,10 @@
       } catch(e) {}
       pc = null;
 
-      // Reinicia solo el remoto; deja local para rematch rápido
       if (remoteVideo.srcObject) { remoteVideo.srcObject.getTracks().forEach(t => t.stop()); }
       remoteVideo.srcObject = null;
+      remoteDot.className = 'dot';
 
-      // Limpia signaling
       if (currentRoomId && clearRoom) {
         try { await roomsRef.child(currentRoomId).remove(); } catch(e) {}
       }
@@ -405,20 +572,24 @@
       setRoom(null);
       setMatch('—');
       setConn('offline');
+      setIce('—');
       resetControls();
     }
 
-    // Wire UI
+    // ======= Wire UI =======
     startBtn.addEventListener('click', start);
     nextBtn.addEventListener('click', next);
     endBtn.addEventListener('click', () => endCall(true));
     muteBtn.addEventListener('click', toggleMute);
     cameraBtn.addEventListener('click', toggleCamera);
+    restartIceBtn.addEventListener('click', () => maybeRestartIce(true));
 
     // Estado inicial
     setConn('offline');
+    setIce('—');
     setMatch('—');
-    log('Listo. Pulsa Start en dos pestañas para probar el match.');
+    setRoom(null);
+    log('Pulsa Start en dos pestañas/dispositivos para probar el emparejamiento.');
   </script>
 </body>
 </html>
